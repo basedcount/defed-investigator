@@ -28,14 +28,16 @@ Scanned: {percentage.toFixed(2) + "%"} {progress - 1} / {data.total}
 
 
 <div style="margin-top: 4rem;">
-The following instances have blocked <span>{data.name}</span>
-<br/>
-{#each data.instances as instance}
-        {#await instance then inst}
-            {#if inst.blocked}
-                {inst.name}
-                <br/>
-            {/if}
-        {/await}
-{/each}
+    The following instances have blocked <span>{data.name}</span>
+    <ul>
+        {#each data.instances as instance}
+            {#await instance then inst}
+                {#if inst.blocked}
+                    <li>
+                        {inst.name}
+                    </li>
+                {/if}
+            {/await}
+        {/each}
+    </ul>
 </div>
