@@ -1,8 +1,7 @@
-import type { Instance as InstanceInit } from "$lib/instanceList";
-import { LemmyHttp, type GetFederatedInstancesResponse } from 'lemmy-js-client';
-import { fetchInstances } from "$lib/instanceList";
+import { fetchInstances, type Instance as InstanceInit } from "$lib/instanceList";
+import type { GetFederatedInstancesResponse } from 'lemmy-js-client';
 
-export async function load({ params }) {
+export async function load({ params, fetch }) {
     const instances = await fetchInstances();
     const name = params.name;
 
@@ -13,20 +12,20 @@ export async function load({ params }) {
 
     return {
         name: name,
-        instances: instances.map(el => checkFederation(name, el)),
+        instances: instances.map(el => checkFederation(name, el, fetch)),
         total: instances.length,
         warning: warning
     };
 }
 
 //Check whether an instance is federated with the queried instance
-async function checkFederation(name: string, instance: InstanceInit): Promise<Instance> {
+async function checkFederation(name: string, instance: InstanceInit, fetch: (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>): Promise<Instance> {
     let linked: boolean | undefined;
     let blocked: boolean | undefined;
     let error: boolean;
 
     try {
-        const federation = await getFederationTimeout(instance.url, 60000);
+        const federation = await fetch('/proxy', { method: 'POST', body: JSON.stringify({ url: instance.url }) }) as GetFederatedInstancesResponse;
 
         const blockedList = federation.federated_instances?.blocked;
         const linkedList = federation.federated_instances?.linked;
@@ -58,17 +57,6 @@ async function checkFederation(name: string, instance: InstanceInit): Promise<In
         error,
     };
 }
-
-//Starts a lemmy client and returns the federation data of an instance, fails after a timeout
-async function getFederationTimeout(url: string, timeout: number): Promise<GetFederatedInstancesResponse> {
-    const federationPromise = (async () => {
-        const client: LemmyHttp = new LemmyHttp(url);
-        return await client.getFederatedInstances();
-    })();
-    const timeoutPromise = new Promise<GetFederatedInstancesResponse>((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout));
-    return Promise.race([federationPromise, timeoutPromise]);
-}
-
 
 interface Instance {
     name: string;                   //Instance name
