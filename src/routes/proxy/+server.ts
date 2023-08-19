@@ -1,7 +1,7 @@
 import { LemmyHttp, type GetFederatedInstancesResponse } from 'lemmy-js-client';
 import { json } from '@sveltejs/kit';
 
-const TIMEOUT = 60000;
+const TIMEOUT = 90000;
 
 export async function POST({ request }) {
     const { url } = await request.json();
