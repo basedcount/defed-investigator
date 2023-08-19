@@ -1,6 +1,6 @@
 import { fetchInstances } from "$lib/instanceList";
 
-export async function load({ params, fetch }) {
+export async function load({ params }) {
     const instances = await fetchInstances();
     const name = params.name;
 
