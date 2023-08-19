@@ -9,7 +9,7 @@ export async function fetchInstances() {
 }
 
 //Fetch a CSV of all Lemmy instances from GitHub and parses it as an array of strings
-async function parseCSV(): Promise<string[]> {
+async function parseCSV() {
     //Fetch list of instances from GitHub
     const url = 'https://raw.githubusercontent.com/maltfield/awesome-lemmy-instances/main/awesome-lemmy-instances.csv';
 
@@ -29,7 +29,7 @@ async function parseCSV(): Promise<string[]> {
 }
 
 //Converts an array of strings to  an array of objects of the Instance interface
-function arrayToObject(arr: string[]): Instance[] {
+function arrayToObject(arr: string[]) {
     arr.splice(0, 1); //Remove first element (CSV heading)
 
     const regex = /\[(.+)\]\((\S+)\)/;    //Regex to capture markdown links eg: [name](link)
@@ -42,7 +42,7 @@ function arrayToObject(arr: string[]): Instance[] {
 
         return {
             name: match[1],
-            url: match[2]
+            url: match[2],
         }
 
     });
@@ -51,7 +51,7 @@ function arrayToObject(arr: string[]): Instance[] {
 }
 
 //Represents a Lemmy instance
-interface Instance {
+export interface Instance {
     name: string;
     url: string;
 }
