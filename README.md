@@ -1,38 +1,8 @@
-# create-svelte
+# Lemmy Defed-Investigator
+A small SvelteKit application to find out who has blocked / defederated your Lemmy instance.
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+# How does it work?
+The site will send a request to every known Lemmy instance through the user's browser. The process will take approximately 1-2 minutes. The list of Lemmy instances is retrieved [here](https://github.com/maltfield/awesome-lemmy-instances).
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+# Troubleshooting
+The site has to query over 1300 instances, so it's possible that a few will time out. At the moment the only workaround for this issue is running the tool multiple times.
