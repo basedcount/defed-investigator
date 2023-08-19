@@ -9,8 +9,7 @@ export async function POST({ request }) {
     try {
         return json(await getFederationTimeout(url, TIMEOUT))
     } catch (e) {
-        console.log('Error with:', url, e)
-        return json(null)
+        return json(e as string, { status: 500 })
     }
 }
 

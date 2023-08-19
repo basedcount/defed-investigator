@@ -17,7 +17,8 @@ async function checkFederation(name: string, instance: InstanceInit, fetch: (inp
     let error: boolean;
 
     try {
-        const federation = await fetch('/proxy', { method: 'POST', body: JSON.stringify({ url: instance.url }) }) as GetFederatedInstancesResponse;
+        const res = await fetch('/proxy', { method: 'POST', body: JSON.stringify({ url: instance.url }) });
+        const federation = await res.json()  as GetFederatedInstancesResponse;
 
         const blockedList = federation.federated_instances?.blocked;
         const linkedList = federation.federated_instances?.linked;
