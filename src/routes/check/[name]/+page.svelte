@@ -3,7 +3,7 @@
 
 	export let data: PageData;
 
-    let progress = 0;
+    let progress = 1;
     let percentage = 0;
 
     data.instances.forEach(p => {
@@ -22,7 +22,7 @@
 	<meta name="description" content="">
 </svelte:head>
 
-Scanned: {percentage + "%"} {progress} / {data.total}
+Scanned: {percentage.toFixed(2) + "%"} {progress - 1} / {data.total}
 
 <br>
 
