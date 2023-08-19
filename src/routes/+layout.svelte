@@ -33,7 +33,7 @@
 
 <div class="navbar bg-base-100">
     <div class="navbar-start">
-        <a class="btn btn-outline btn-secondary normal-case text-sm px-2 md:px-4" href="https://lemmy.basedcount.com">
+        <a class="btn btn-outline btn-secondary normal-case text-sm px-2 md:px-4 cursor-pointer" href="https://lemmy.basedcount.com">
             <span class="hidden md:block">
                 Powered by Based Count
             </span>
@@ -43,11 +43,11 @@
     </div>
 
     <div class="navbar-center">
-      <a class="btn btn-ghost normal-case text-xl" href="/">Lemmy Defed-Investigator</a>
+      <a class="btn btn-ghost normal-case text-xl cursor-pointer" href="/">Lemmy Defed-Investigator</a>
     </div>
 
     <div class="navbar-end">
-        <a href="https://github.com/ornato-t/lemmy-defed-investigator" class="btn btn-ghost hidden md:flex">
+        <a class="btn btn-ghost hidden md:flex cursor-pointer" href="https://github.com/ornato-t/lemmy-defed-investigator">
             <i class='bx bxl-github text-4xl'></i>
         </a>
     </div>     
