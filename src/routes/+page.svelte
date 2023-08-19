@@ -26,9 +26,9 @@
             <input type="text" placeholder="lemmy.example.com" class="input input-bordered input-primary w-full max-w-xs" bind:value={instance}/>
         </form>
 
-        <div class="py-4 text-sm">
+        <div class="py-6 text-sm text-acc">
             <p>
-                <span class="font-bold">How does this work?</span> The Investigator will query every Lemmy instance through your browser. The search will take approximately 1-2 minutes. 
+                <span class="font-bold text-accent-focus">How does this work?</span> The Investigator will query every Lemmy instance through your browser. The search will take approximately 1-2 minutes. 
             </p>
             <p>
                 The full list of instances is available <a href="https://github.com/maltfield/awesome-lemmy-instances" class="link">here</a>.
