@@ -4,8 +4,7 @@
     let instance: string;
 
     function query() {
-        console.log(instance)
-        goto(`/check/${instance}`);
+        if(instance.length > 0) goto(`/check/${instance}`);
     }
 </script>
 
@@ -22,8 +21,11 @@
             </p>
         </div>
 
-        <form on:submit|preventDefault={query}>
+        <form on:submit|preventDefault={query} class="w-full flex flex-row place-content-center gap-x-2">
             <input type="text" placeholder="lemmy.example.com" class="input input-bordered input-primary w-full max-w-xs" bind:value={instance}/>
+            <button class="btn btn-outline btn-primary">
+                <i class='bx bx-search-alt text-xl'></i>
+            </button>
         </form>
 
         <div class="py-6 text-sm text-acc">
