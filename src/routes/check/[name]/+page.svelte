@@ -22,7 +22,7 @@
 	<meta name="description" content="">
 </svelte:head>
 
-<main class="h-[calc(100vh-4rem)] w-full bg-base-200">
+<main class="min-h-[calc(100vh-4rem)] w-full bg-base-200 pb-6">
     <div class="mx-4 md:mx-auto md:w-2/3 flex flex-col items-center">
         {#if data.warning}
             <div class="alert alert-warning mt-3 w-fit">

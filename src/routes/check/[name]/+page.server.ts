@@ -4,10 +4,15 @@ export async function load({ params }) {
     const instances = await fetchInstances();
     const name = params.name;
 
-    let warning = false;
+    let warning = true;
 
     //Send a warning if the instance isn't in the CSV file: it probably doesn't exist
-    if (!instances.map(el => el.url).includes(name)) warning = true;
+    for(const host of instances.map(el => el.url)){
+        if(host.includes(name)) {
+            warning = false;
+            break;
+        }
+    }
 
     return {
         name: name,
