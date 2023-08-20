@@ -5,16 +5,27 @@
 
     let progress = 1;
     let percentage = 0;
+    let blockedCount = 0;
+    let linkedCount = 0;
+    let errorCount = 0;
 
     data.instances.forEach(p => {
-        p.then(() => {
+        p.then(val => {
             percentage = progress++ / data.total * 100;
+            if(val.blocked) blockedCount++
+            if(val.linked) linkedCount++
+            if(val.error) errorCount++
         })
 
         p.catch(() => {
             percentage = progress++ / data.total * 100;
+            errorCount++
         })
     });
+
+    function trimUrl(url: string){
+        return url.substring(8);    //From "https://example.com" return "example.com"
+    }
 </script>
 
 <svelte:head>
@@ -52,17 +63,25 @@
 
         <div class="mt-6 w-full flex flex-col gap-4">
             <div class="collapse collapse-arrow bg-secondary">
-                <input type="radio" name="my-accordion-2" checked={true} /> 
+                <input type="checkbox" name="my-accordion-2" checked={true} /> 
                 <div class="collapse-title text-xl font-medium">
                     Instances defederated from <span class="font-mono">{data.name}</span>
                 </div>
-                <div class="collapse-content">
+                <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+                    <div class="col-span-full">
+                        {blockedCount} total instances
+                    </div>
+
                     {#each data.instances as instance}
                     {#await instance then inst}
                     {#if inst.blocked}
-                        <li>
-                            {inst.name}
-                        </li>
+                        <div class="card card-compact w-full bg-secondary-focus shadow-md overflow-clip text-clip">
+                            <div class="card-body">
+                              <h2 class="card-title">{inst.name}</h2>
+                              <a class="link max-w-fit mx-2" href="{inst.url}">{trimUrl(inst.url)}</a>
+                              <p>{inst.users} {inst.users === 1 ? 'active user' : 'active users'}</p>
+                            </div>
+                        </div>
                     {/if}
                     {/await}
                     {/each}
@@ -70,17 +89,25 @@
             </div>
 
             <div class="collapse collapse-arrow bg-accent">
-                <input type="radio" name="my-accordion-2" /> 
+                <input type="checkbox" name="my-accordion-2" /> 
                 <div class="collapse-title text-xl font-medium">
                     Instances federated with <span class="font-mono">{data.name}</span>
                 </div>
-                <div class="collapse-content"> 
+                <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4"> 
+                    <div class="col-span-full">
+                        {linkedCount} total instances
+                    </div>
+
                     {#each data.instances as instance}
                     {#await instance then inst}
                     {#if inst.linked}
-                        <li>
-                            {inst.name}
-                        </li>
+                    <div class="card card-compact w-full bg-accent-focus shadow-md overflow-clip text-clip">
+                        <div class="card-body">
+                          <h2 class="card-title">{inst.name}</h2>
+                          <a class="link max-w-fit mx-2" href="{inst.url}">{trimUrl(inst.url)}</a>
+                          <p>{inst.users} {inst.users === 1 ? 'active user' : 'active users'}</p>
+                        </div>
+                    </div>
                     {/if}
                     {/await}
                     {/each}
@@ -88,17 +115,25 @@
             </div>
 
             <div class="collapse collapse-arrow bg-error">
-                <input type="radio" name="my-accordion-2" /> 
+                <input type="checkbox" name="my-accordion-2" /> 
                 <div class="collapse-title text-xl font-medium">
                     Instances that returned errors
                 </div>
-                <div class="collapse-content"> 
+                <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+                    <div class="col-span-full">
+                        {errorCount} total instances
+                    </div>
+
                     {#each data.instances as instance}
                     {#await instance then inst}
                     {#if inst.error}
-                        <li>
-                            {inst.name}
-                        </li>
+                    <div class="card card-compact w-full bg-red-400 shadow-md overflow-clip text-clip">
+                        <div class="card-body">
+                          <h2 class="card-title">{inst.name}</h2>
+                          <a class="link max-w-fit mx-2" href="{inst.url}">{trimUrl(inst.url)}</a>
+                          <p>{inst.users} {inst.users === 1 ? 'active user' : 'active users'}</p>
+                        </div>
+                    </div>
                     {/if}
                     {/await}
                     {/each}

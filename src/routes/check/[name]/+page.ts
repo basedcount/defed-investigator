@@ -45,6 +45,7 @@ async function checkFederation(name: string, instance: InstanceInit, fetch: (inp
     return {
         name: instance.name,
         url: instance.url,
+        users: instance.users,
         linked,
         blocked,
         error,
@@ -54,6 +55,7 @@ async function checkFederation(name: string, instance: InstanceInit, fetch: (inp
 interface Instance {
     name: string;                   //Instance name
     url: string;                    //Instance domain
+    users: number;                  //Number of active users in the instance
     linked: boolean | undefined;    //Instance linked with queried instance
     blocked: boolean | undefined;   //Instance has blocked/defederated the queried instance
     error: boolean                  //Error during lookup
