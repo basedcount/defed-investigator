@@ -114,6 +114,7 @@
                 </div>
             </div>
 
+            {#if errorCount > 0}
             <div class="collapse collapse-arrow bg-error">
                 <input type="checkbox" name="my-accordion-2" /> 
                 <div class="collapse-title text-xl font-medium">
@@ -137,8 +138,12 @@
                     {/if}
                     {/await}
                     {/each}
+                    <div class="col-span-full text-sm italic">
+                        These errors are likely caused by timeouts to the requests. A stable connection and a decently powerful device can help reduce the number of errors.
+                    </div>
                 </div>
             </div>
+            {/if}
         </div>
     </div>   
 </main>
