@@ -18,17 +18,17 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://defed.basedcount.com/" />
+    <meta property="og:url" content="https://defed.xyz/" />
     <meta property="og:title" content="Defederation Investigator for Lemmy" />
     <meta property="og:description" content="Discover who has defederated your Lemmy instance with the Defederation Investigator." />
-    <meta property="og:image" content="https://defed.basedcount.com/favicon.png" />
+    <meta property="og:image" content="https://defed.xyz/favicon.png" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://defed.basedcount.com/" />
+    <meta property="twitter:url" content="https://defed.xyz" />
     <meta property="twitter:title" content="Defederation Investigator for Lemmy" />
     <meta property="twitter:description" content="Discover who has defederated your Lemmy instance with the Defederation Investigator." />
-    <meta property="twitter:image" content="https://defed.basedcount.com/favicon.png" />
+    <meta property="twitter:image" content="https://defed.xyz/favicon.png" />
 </svelte:head>
 
 <div class="navbar bg-base-100">
