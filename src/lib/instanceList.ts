@@ -1,57 +1,43 @@
-import { parse } from 'csv-parse';
+const THRESHOLD = 2;    //Instances with less than THRESHOLD users aren't counted (limits number of requests)
 
-//Return a list of instance links and their names, fetched from the awesome-lemmy-instances GitHub repo
+//Return a list of instance links and their names, fetched from the Fediverse Observer API https://api.fediverse.observer/
 export async function fetchInstances() {
-    const { instancesArr, usersArr } = await parseCSV();
-    const instances = arrayToObject(instancesArr, usersArr);
+    const res = await fetchGraphQL();
+    let instances = res.data.nodes;
 
-    return instances;
+    instances.sort((a, b) => b.active_users_monthly - a.active_users_monthly);
+
+    instances = instances.filter(inst => inst.active_users_monthly >= THRESHOLD);
+
+    return instances.map(inst => ({
+        name: inst.name,
+        url: `https://${inst.domain}`,
+        users: inst.active_users_monthly
+    })) satisfies Instance[];
 }
 
-//Fetch a CSV of all Lemmy instances from GitHub and parses it as an array of strings
-async function parseCSV() {
-    //Fetch list of instances from GitHub
-    const url = 'https://raw.githubusercontent.com/maltfield/awesome-lemmy-instances/main/awesome-lemmy-instances.csv';
-
-    //Parse the request
-    const res = await fetch(url);
-    const data = await res.text();
-
-    //Setup CSV parser and asynchronously parse each line
-    const parser = parse(data);
-    const instances = new Array<string>();
-    const users = new Array<number>();
-
-    for await (const record of parser) {
-        instances.push(record[0]);
-        users.push(record[6]);
-    }
-
-    return { instancesArr: instances, usersArr: users };
-}
-
-//Converts an array of strings to  an array of objects of the Instance interface
-function arrayToObject(arr: string[], users: number[]) {
-    arr.splice(0, 1); //Remove first element (CSV heading)
-    users.splice(0, 1); //Remove first element (CSV heading)
-
-    const regex = /\[(.+)\]\((\S+)\)/;    //Regex to capture markdown links eg: [name](link)
-
-    const res: Instance[] = arr.map((line, i) => {
-        const match = line.match(regex);
-
-        if (match == null) throw new Error('Badly formatted CSV');
-        if (match.length < 3) throw new Error('Badly formatted CSV');
-
-        return {
-            name: match[1],
-            url: match[2],
-            users: users[i],
-        }
-
+//Makes a GraphQL request and extracts the JSON data
+async function fetchGraphQL() {
+    const res = await fetch("https://api.fediverse.observer/", {
+        "credentials": "omit",
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0",
+            "Accept": "*/*",
+            "Accept-Language": "it",
+            "Content-Type": "application/json",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache"
+        },
+        "referrer": "https://api.fediverse.observer/",
+        "body": "{\"query\":\"\\n{\\n  nodes(softwarename: \\\"lemmy\\\"){\\n    domain\\n    name\\n    active_users_monthly\\n  }\\n}\\n    \"}",
+        "method": "POST",
+        "mode": "cors"
     });
 
-    return res;
+    return await res.json() as GraphQLResponse;
 }
 
 //Represents a Lemmy instance
@@ -59,4 +45,19 @@ export interface Instance {
     name: string;
     url: string;
     users: number;
+}
+
+// GraphQL stuff
+interface GraphQLResponse {
+    data: Data
+}
+
+interface Data {
+    nodes: Node[]
+}
+
+interface Node {
+    domain: string
+    name: string
+    active_users_monthly: number
 }
