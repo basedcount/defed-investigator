@@ -171,7 +171,7 @@
                     {/each}
                     <div class="col-span-full text-sm italic">
                         <p>
-                            These errors are likely caused by the instances blocking the API used by the Investigator (as is the case for <span class="font-mono">programming.dev</span> and <span class="font-mono">futurology.today</span>) or them being offline.
+                            These errors are likely caused by the instances blocking <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS" class="link">CORS requests</a> or them being offline.
                         </p>
                         <p>
                             They could also be caused by timeouts to the connection. A stable connection and a decently powerful device may help in reducing their number.
