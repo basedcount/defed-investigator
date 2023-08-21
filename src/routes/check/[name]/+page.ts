@@ -1,5 +1,7 @@
 import type { Instance as InstanceInit } from "$lib/instanceList";
-import type { GetFederatedInstancesResponse } from 'lemmy-js-client';
+import { LemmyHttp, type GetFederatedInstancesResponse } from 'lemmy-js-client';
+
+const TIMEOUT = 90000;
 
 export async function load({ fetch, data }) {
     return {
@@ -18,8 +20,7 @@ async function checkFederation(name: string, instance: InstanceInit, fetch: (inp
     let error: boolean;
 
     try {
-        const res = await fetch('/proxy', { method: 'POST', body: JSON.stringify({ url: instance.url }) });
-        const federation = await res.json() as GetFederatedInstancesResponse;
+        const federation = await getFederationTimeout(instance.url, TIMEOUT);
 
         const blockedList = federation.federated_instances?.blocked;
         const linkedList = federation.federated_instances?.linked;
@@ -67,6 +68,18 @@ async function checkFederation(name: string, instance: InstanceInit, fetch: (inp
         error,
     };
 }
+
+//Starts a lemmy client and returns the federation data of an instance, fails after a timeout
+async function getFederationTimeout(url: string, timeout: number): Promise<GetFederatedInstancesResponse> {
+    const federationPromise = (async () => {
+        const client: LemmyHttp = new LemmyHttp(url);
+        return await client.getFederatedInstances();
+    })();
+
+    const timeoutPromise = new Promise<GetFederatedInstancesResponse>((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout));
+    return Promise.race([federationPromise, timeoutPromise]);
+}
+
 
 interface Instance {
     name: string;                   //Instance name
