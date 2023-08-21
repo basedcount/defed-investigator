@@ -71,7 +71,7 @@
                 </div>
                 <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
                     <div class="col-span-full">
-                        {blockedCount} total instances
+                        {blockedCount} total {blockedCount === 1 ? 'instance' : 'instances'}
                     </div>
 
                     {#each data.instances as instance}
@@ -97,7 +97,7 @@
                 </div>
                 <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4"> 
                     <div class="col-span-full">
-                        {notAllowedCount} total instances
+                        {notAllowedCount} total {notAllowedCount === 1 ? 'instance' : 'instances'}
                         <p class="font-sm mt-1">
                             These instances are only federating with a limited number of domains and <span class="font-mono">{data.name}</span> isn't among them. 
                         </p>
@@ -126,7 +126,7 @@
                 </div>
                 <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4"> 
                     <div class="col-span-full">
-                        {linkedCount} total instances
+                        {linkedCount} total {linkedCount === 1 ? 'instance' : 'instances'}
                     </div>
 
                     {#each data.instances as instance}
@@ -153,7 +153,7 @@
                 </div>
                 <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
                     <div class="col-span-full">
-                        {errorCount} total instances
+                        {errorCount} total {errorCount === 1 ? 'instance' : 'instances'}
                     </div>
 
                     {#each data.instances as instance}
