@@ -139,7 +139,12 @@
                     {/await}
                     {/each}
                     <div class="col-span-full text-sm italic">
-                        These errors are likely caused by timeouts to the requests. A stable connection and a decently powerful device can help reduce the number of errors.
+                        <p>
+                            These errors are likely caused by the instances blocking the API used by the Investigator (as is the case for <span class="font-mono">programming.dev</span> and <span class="font-mono">futurology.today</span>) or them being offline.
+                        </p>
+                        <p>
+                            They could also be caused by timeouts to the connection. A stable connection and a decently powerful device may help in reducing their number.
+                        </p>
                     </div>
                 </div>
             </div>
