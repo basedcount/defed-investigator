@@ -4,8 +4,19 @@
     let instance: string;
 
     function query() {
-        if(instance.length > 0) goto(`/check/${instance}`);
+        if(instance.length > 0) goto(`/check/${removeProtocol(instance).toLowerCase()}`);
     }
+
+    //If the user submitted URL includes the protocol, cut it out
+    function removeProtocol(url: string) {
+        if (url.startsWith("http://"))
+            return url.slice(7);
+        else if (url.startsWith("https://"))
+            return url.slice(8);
+
+        return url;
+    }
+
 </script>
 
 <div class="hero min-h-[calc(100vh-4rem)] bg-base-200">
