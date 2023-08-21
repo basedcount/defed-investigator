@@ -7,6 +7,7 @@
     let percentage = 0;
     let blockedCount = 0;
     let linkedCount = 0;
+    let notAllowedCount = 0;
     let errorCount = 0;
 
     data.instances.forEach(p => {
@@ -14,6 +15,7 @@
             percentage = progress++ / data.total * 100;
             if(val.blocked) blockedCount++
             if(val.linked) linkedCount++
+            if(val.notAllowed) notAllowedCount++
             if(val.error) errorCount++
         })
 
@@ -78,10 +80,39 @@
                         <div class="card card-compact w-full bg-secondary-focus shadow-md overflow-clip text-clip">
                             <div class="card-body">
                               <h2 class="card-title">{inst.name}</h2>
-                              <a class="link max-w-fit mx-2" href="{inst.url}">{trimUrl(inst.url)}</a>
+                              <a class="link max-w-fit mx-2 md:mx-0" href="{inst.url}">{trimUrl(inst.url)}</a>
                               <p>{inst.users} {inst.users === 1 ? 'active user' : 'active users'}</p>
                             </div>
                         </div>
+                    {/if}
+                    {/await}
+                    {/each}
+                </div>
+            </div>
+
+            <div class="collapse collapse-arrow bg-primary">
+                <input type="checkbox" name="my-accordion-2" /> 
+                <div class="collapse-title text-xl font-medium">
+                    Instances not allowing <span class="font-mono">{data.name}</span>
+                </div>
+                <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4"> 
+                    <div class="col-span-full">
+                        {notAllowedCount} total instances
+                        <p class="font-sm mt-1">
+                            These instances are only federating with a limited number of domains and <span class="font-mono">{data.name}</span> isn't among them. 
+                        </p>
+                    </div>
+
+                    {#each data.instances as instance}
+                    {#await instance then inst}
+                    {#if inst.notAllowed}
+                    <div class="card card-compact w-full bg-primary-focus shadow-md overflow-clip text-clip">
+                        <div class="card-body">
+                          <h2 class="card-title">{inst.name}</h2>
+                          <a class="link max-w-fit mx-2 md:mx-0" href="{inst.url}">{trimUrl(inst.url)}</a>
+                          <p>{inst.users} {inst.users === 1 ? 'active user' : 'active users'}</p>
+                        </div>
+                    </div>
                     {/if}
                     {/await}
                     {/each}
@@ -104,7 +135,7 @@
                     <div class="card card-compact w-full bg-accent-focus shadow-md overflow-clip text-clip">
                         <div class="card-body">
                           <h2 class="card-title">{inst.name}</h2>
-                          <a class="link max-w-fit mx-2" href="{inst.url}">{trimUrl(inst.url)}</a>
+                          <a class="link max-w-fit mx-2 md:mx-0" href="{inst.url}">{trimUrl(inst.url)}</a>
                           <p>{inst.users} {inst.users === 1 ? 'active user' : 'active users'}</p>
                         </div>
                     </div>
@@ -113,7 +144,7 @@
                     {/each}
                 </div>
             </div>
-
+            
             {#if errorCount > 0}
             <div class="collapse collapse-arrow bg-error">
                 <input type="checkbox" name="my-accordion-2" /> 
@@ -131,7 +162,7 @@
                     <div class="card card-compact w-full bg-red-400 shadow-md overflow-clip text-clip">
                         <div class="card-body">
                           <h2 class="card-title">{inst.name}</h2>
-                          <a class="link max-w-fit mx-2" href="{inst.url}">{trimUrl(inst.url)}</a>
+                          <a class="link max-w-fit mx-2 md:mx-0" href="{inst.url}">{trimUrl(inst.url)}</a>
                           <p>{inst.users} {inst.users === 1 ? 'active user' : 'active users'}</p>
                         </div>
                     </div>
