@@ -11,6 +11,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/adapter-netlify": "^2.0.8",
 		"@sveltejs/kit": "^1.20.4",
 		"autoprefixer": "^10.4.15",
 		"daisyui": "^3.5.1",
@@ -24,7 +25,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/adapter-cloudflare": "^2.3.2",
 		"boxicons": "^2.1.4",
 		"install": "^0.13.0",
 		"lemmy-js-client": "^0.19.0-rc.2",
