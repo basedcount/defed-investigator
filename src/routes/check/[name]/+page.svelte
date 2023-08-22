@@ -119,6 +119,33 @@
                 </div>
             </div>
 
+            {#if data.blockedBy.length > 0}
+            <div class="collapse collapse-arrow bg-green-500">
+                <input type="checkbox" name="my-accordion-2"  aria-label="Expand / collapse"/> 
+                <div class="collapse-title text-xl font-medium">
+                    Instances defederated by <span class="font-mono">{data.name}</span>
+                </div>
+                <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+                    <div class="col-span-full">
+                        {data.blockedBy.length} total {data.blockedBy.length === 1 ? 'instance' : 'instances'}
+                        <p class="font-sm mt-1">
+                            <span class="font-mono">{data.name}</span> has defederated from these instances.
+                        </p>
+                    </div>
+
+                    {#each data.blockedBy as inst}
+                    <div class="card card-compact w-full bg-green-600 shadow-md overflow-clip text-clip">
+                        <div class="card-body">
+                          <h2 class="card-title">{inst.name}</h2>
+                          <a class="link max-w-fit mx-2 md:mx-0" href="{inst.url}">{trimUrl(inst.url)}</a>
+                          <p>{inst.users} {inst.users === 1 ? 'active user' : 'active users'}</p>
+                        </div>
+                    </div>
+                    {/each}
+                </div>
+            </div>
+            {/if}
+
             <div class="collapse collapse-arrow bg-accent">
                 <input type="checkbox" name="my-accordion-2"  aria-label="Expand / collapse"/> 
                 <div class="collapse-title text-xl font-medium">
