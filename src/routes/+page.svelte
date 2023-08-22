@@ -34,7 +34,7 @@
 
         <form on:submit|preventDefault={query} class="w-full flex flex-row place-content-center gap-x-2">
             <input type="text" placeholder="lemmy.example.com" class="input input-bordered input-primary w-full max-w-xs" bind:value={instance}/>
-            <button class="btn btn-outline btn-primary">
+            <button class="btn btn-outline btn-primary" aria-label="Search">
                 <i class='bx bx-search-alt text-xl'></i>
             </button>
         </form>
@@ -44,7 +44,7 @@
                 <span class="font-bold text-accent-focus">How does this work?</span> The Investigator will query every Lemmy instance through your browser. The search will take approximately 1-2 minutes. 
             </p>
             <p>
-                The full list of instances is available <a href="https://github.com/maltfield/awesome-lemmy-instances" class="link">here</a>.
+                The full list of instances is available in <a href="https://github.com/maltfield/awesome-lemmy-instances" class="link">this repository</a>.
             </p>
         </div>
       </div>

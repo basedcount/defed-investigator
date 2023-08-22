@@ -65,7 +65,7 @@
 
         <div class="mt-6 w-full flex flex-col gap-4">
             <div class="collapse collapse-arrow bg-secondary">
-                <input type="checkbox" name="my-accordion-2" checked={true} /> 
+                <input type="checkbox" name="my-accordion-2" checked={true} aria-label="Expand / collapse"/> 
                 <div class="collapse-title text-xl font-medium">
                     Instances defederated from <span class="font-mono">{data.name}</span>
                 </div>
@@ -91,7 +91,7 @@
             </div>
 
             <div class="collapse collapse-arrow bg-primary">
-                <input type="checkbox" name="my-accordion-2" /> 
+                <input type="checkbox" name="my-accordion-2"  aria-label="Expand / collapse"/> 
                 <div class="collapse-title text-xl font-medium">
                     Instances not allowing <span class="font-mono">{data.name}</span>
                 </div>
@@ -120,7 +120,7 @@
             </div>
 
             <div class="collapse collapse-arrow bg-accent">
-                <input type="checkbox" name="my-accordion-2" /> 
+                <input type="checkbox" name="my-accordion-2"  aria-label="Expand / collapse"/> 
                 <div class="collapse-title text-xl font-medium">
                     Instances federated with <span class="font-mono">{data.name}</span>
                 </div>
@@ -147,7 +147,7 @@
             
             {#if errorCount > 0}
             <div class="collapse collapse-arrow bg-error">
-                <input type="checkbox" name="my-accordion-2" /> 
+                <input type="checkbox" name="my-accordion-2"  aria-label="Expand / collapse"/> 
                 <div class="collapse-title text-xl font-medium">
                     Instances that returned errors
                 </div>
