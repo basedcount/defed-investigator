@@ -119,7 +119,6 @@
                 </div>
             </div>
 
-            {#if data.blockedBy.length > 0}
             <div class="collapse collapse-arrow bg-green-500">
                 <input type="checkbox" name="my-accordion-2"  aria-label="Expand / collapse"/> 
                 <div class="collapse-title text-xl font-medium">
@@ -129,7 +128,13 @@
                     <div class="col-span-full">
                         {data.blockedBy.length} total {data.blockedBy.length === 1 ? 'instance' : 'instances'}
                         <p class="font-sm mt-1">
-                            <span class="font-mono">{data.name}</span> has defederated from these instances.
+                            {#if data.blockedBy.length > 1}
+                                <span class="font-mono">{data.name}</span> has defederated from these instances.
+                            {:else if data.blockedBy.length === 1}
+                                <span class="font-mono">{data.name}</span> has defederated from this instance.
+                            {:else}
+                                <span class="font-mono">{data.name}</span> hasn't defederated from any instances.
+                            {/if}
                         </p>
                     </div>
 
@@ -144,7 +149,6 @@
                     {/each}
                 </div>
             </div>
-            {/if}
 
             <div class="collapse collapse-arrow bg-accent">
                 <input type="checkbox" name="my-accordion-2"  aria-label="Expand / collapse"/> 
