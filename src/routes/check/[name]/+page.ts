@@ -1,19 +1,19 @@
 import type { Instance as InstanceInit } from "$lib/instanceList";
 import { LemmyHttp, type GetFederatedInstancesResponse } from 'lemmy-js-client';
 
-const TIMEOUT = 90000;
+const TIMEOUT = 60000;
 
-export async function load({ fetch, data }) {
+export async function load({ data }) {
     return {
         name: data.name,
-        instances: data.instances.map(el => checkFederation(data.name, el, fetch)),
+        instances: data.instances.map(el => checkFederation(data.name, el)),
         total: data.instances.length,
         warning: data.warning
     };
 }
 
 //Check whether an instance is federated with the queried instance
-async function checkFederation(name: string, instance: InstanceInit, fetch: (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>): Promise<Instance> {
+async function checkFederation(name: string, instance: InstanceInit): Promise<Instance> {
     let linked: boolean | undefined;
     let blocked: boolean | undefined;
     let notAllowed: boolean | undefined;
