@@ -29,6 +29,17 @@
     <meta property="twitter:title" content="Defederation Investigator for Lemmy" />
     <meta property="twitter:description" content="Discover who has defederated your Lemmy instance with the Defederation Investigator." />
     <meta property="twitter:image" content="https://defed.xyz/favicon.png" />
+
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3TFNW0J691"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-3TFNW0J691');
+    </script>
 </svelte:head>
 
 <div class="navbar bg-base-100">
