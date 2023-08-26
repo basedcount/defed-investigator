@@ -1,1 +1,0 @@
-<a href="/community/pcm@lemmy.basedcount.com" class="btn btn-lg btn-primary place-self-center">test</a>
