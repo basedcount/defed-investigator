@@ -12,9 +12,9 @@
     data.instances.forEach(p => {
         p.then(val => {
             percentage = progress++ / data.total * 100;
-            if(val.blocked && val.error === false) blockedCount++
+            if(val.blocked === true && val.error === false && val.federated === false) blockedCount++
             if(val.blocked === false && val.error === false) linkedCount++
-            if(val.error) errorCount++
+            if(val.error === true) errorCount++
         })
 
         p.catch(() => {
@@ -36,6 +36,15 @@
 
 <main class="min-h-[calc(100vh-4rem)] w-full bg-base-200 pb-6">
     <div class="mx-4 md:mx-auto md:w-2/3 flex flex-col items-center">
+        <div class="alert alert-info mt-3 w-1/3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <div>
+                <h2 class="text-xl font-semibold">Page under construction!</h2>
+                <p class="mb-2">The data displayed on this page isn't reliable.</p>
+                <p>For the time being, Lemmy offers very limited tools to check for community blocks.</p>
+            </div>
+        </div>
+
         {#if data.warning}
             <div class="alert alert-warning mt-3 w-fit">
                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -71,11 +80,16 @@
                 <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
                     <div class="col-span-full">
                         {blockedCount} total {blockedCount === 1 ? 'instance' : 'instances'}
+                        <p class="font-sm mt-1">
+                            These instances are federated with <span class="font-mono">{data.domain}</span> but aren't linked with the <span class="font-mono">{data.community}</span> community.
+                            <br>
+                            Note that this doesn't necessarily mean that the instances have blocked the community.
+                        </p>
                     </div>
 
                     {#each data.instances as instance}
                     {#await instance then inst}
-                    {#if inst.blocked === true}
+                    {#if inst.blocked === true && inst.federated === false}
                         <div class="card card-compact w-full bg-secondary-focus shadow-md overflow-clip text-clip">
                             <div class="card-body">
                               <h2 class="card-title">{inst.name}</h2>

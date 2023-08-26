@@ -1,5 +1,5 @@
 import type { Instance as InstanceInit } from "$lib/instanceList";
-import { LemmyHttp, type GetCommunityResponse } from 'lemmy-js-client';
+import getCommunityTimeout from "./getCommunityTimeout.js";
 
 const TIMEOUT = 60000;
 
@@ -8,31 +8,35 @@ export async function load({ data }) {
         name: data.name,
         domain: data.domain,
         community: data.community,
-        instances: data.instances.map(el => getBlockedCommunities(el, data.name)),
+        instances: data.instances.map(el => getBlockedCommunities(el, data.name, data.domain)),
         total: data.instances.length,
         warning: data.warning
     };
 }
 
 //Get a list of communities blocked by the queried instance
-async function getBlockedCommunities(instance: InstanceInit, community: string) {
+async function getBlockedCommunities(instance: InstanceInit, community: string, hostInstance: string) {
     try {
-        const res = await getCommunityTimeout(instance.url, community, TIMEOUT);
+        const res = await getCommunityTimeout(instance.url, community, hostInstance, TIMEOUT);
 
         return {
             name: instance.name,
             url: instance.url,
             users: instance.users,
             blocked: res.community_view.blocked,
+            federated: res.federated,
             error: false
         };
     } catch (e) {
-        if (e === 'couldnt_find_community') return { 
-            name: instance.name,
-            url: instance.url,
-            users: instance.users,
-            blocked: undefined,
-            error: false 
+        if (e === 'couldnt_find_community') {
+            return {
+                name: instance.name,
+                url: instance.url,
+                users: instance.users,
+                blocked: true,
+                federated: false,
+                error: false
+            }
         }
 
         return {
@@ -40,19 +44,9 @@ async function getBlockedCommunities(instance: InstanceInit, community: string) 
             url: instance.url,
             users: instance.users,
             blocked: undefined,
+            federated: undefined,
             error: true
         }
     }
 
-}
-
-//Starts a lemmy client and returns the federation data of an instance, fails after a timeout
-async function getCommunityTimeout(url: string, community: string, timeout: number): Promise<GetCommunityResponse> {
-    const communityPromise = (async () => {
-        const client: LemmyHttp = new LemmyHttp(url);
-        return await client.getCommunity({ name: community });
-    })();
-
-    const timeoutPromise = new Promise<GetCommunityResponse>((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout));
-    return Promise.race([communityPromise, timeoutPromise]);
 }
