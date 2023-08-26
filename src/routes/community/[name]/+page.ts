@@ -1,5 +1,5 @@
 import type { Instance as InstanceInit } from "$lib/instanceList";
-import { LemmyHttp, type CommunityView, type GetCommunityResponse } from 'lemmy-js-client';
+import { LemmyHttp, type GetCommunityResponse } from 'lemmy-js-client';
 
 const TIMEOUT = 60000;
 
@@ -23,12 +23,23 @@ async function getBlockedCommunities(instance: InstanceInit, community: string) 
             name: instance.name,
             url: instance.url,
             users: instance.users,
-            // communityName: res.community_view.community.title,
             blocked: res.community_view.blocked,
             error: false
         };
     } catch (e) {
+        if (e === 'couldnt_find_community') return { 
+            name: instance.name,
+            url: instance.url,
+            users: instance.users,
+            blocked: undefined,
+            error: false 
+        }
+
         return {
+            name: instance.name,
+            url: instance.url,
+            users: instance.users,
+            blocked: undefined,
             error: true
         }
     }

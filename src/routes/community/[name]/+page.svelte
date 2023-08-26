@@ -75,7 +75,7 @@
 
                     {#each data.instances as instance}
                     {#await instance then inst}
-                    {#if inst.blocked}
+                    {#if inst.blocked === true}
                         <div class="card card-compact w-full bg-secondary-focus shadow-md overflow-clip text-clip">
                             <div class="card-body">
                               <h2 class="card-title">{inst.name}</h2>
