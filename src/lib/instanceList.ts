@@ -22,7 +22,7 @@ async function parseCSV() {
     const data = await res.text();
 
     //Setup CSV parser and asynchronously parse each line
-    const parser = parse(data);
+    const parser = parse(data, { relax_quotes: true });
     const instances = new Array<string>();
     const users = new Array<number>();
 
