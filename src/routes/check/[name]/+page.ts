@@ -7,7 +7,7 @@ export async function load({ data }) {
     return {
         name: data.name,
         instances: data.instances.map(el => checkFederation(data.name, el)),
-        blockedBy: getBlockedBy(data.name, data.instances),
+        blockedBy: await getBlockedBy(data.name, data.instances),
         total: data.instances.length,
         warning: data.warning
     };
