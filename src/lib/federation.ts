@@ -1,4 +1,5 @@
 import type { Instance as InstanceInit } from "./instanceList";
+import { fetchTimeout } from "./fetch";
 
 const TIMEOUT = 60000;
 
@@ -127,27 +128,10 @@ async function checkMastodon(instance: MastodonInstance, query: string): Promise
     }
 }
 
-
-/*      HELPER FUNCTIONS       */
-
-//Performs a fetch request to a given url but aborts it after timeout milliseconds
-async function fetchTimeout(url: string, timeout: number): Promise<{ data: any; code: number; ok: boolean; }> {
-    const federationPromise = (async () => {
-        const res = await fetch(url);
-        if (!res.ok) return { data: [], code: res.status, ok: res.ok };
-
-        return { data: await res.json(), code: res.status, ok: res.ok };
-    })();
-
-    const timeoutPromise = new Promise<any>((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout));
-    return Promise.race([federationPromise, timeoutPromise]);
-}
-
-
 /*      TS INTERFACES       */
 
-interface LemmyInstance extends InstanceInit { software: 'lemmy' }
-interface MastodonInstance extends InstanceInit { software: 'mastodon' }
+export interface LemmyInstance extends InstanceInit { software: 'lemmy' }
+export interface MastodonInstance extends InstanceInit { software: 'mastodon' }
 
 interface Response {
     linked: boolean | undefined;    //Instance linked with queried instance

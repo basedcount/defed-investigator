@@ -1,3 +1,8 @@
 - move card to standalone component, pass color as prop
 - add software icon as background to cards
 - add filtering checkboxes in query page
+- await defederation promise on client
+- increase instanceList threshold, figure out way to make requests in batches
+- bug: when software is unknown no defed info can be gathered
+  - the list has many holes, so it happens fairly often (eg: lemm.ee, lemmy.basedcount.com)
+  - maybe when the current API gets promoted to production there will be fewer holes

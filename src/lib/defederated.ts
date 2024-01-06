@@ -1,0 +1,95 @@
+import type { Instance } from "./instanceList";
+import { fetchTimeout } from "./fetch";
+import type { LemmyInstance, MastodonInstance } from "./federation";
+
+const TIMEOUT = 60000;
+
+/**
+ * Get the defederation lits of a queried instance
+ * @param instanceList The list of instances retrieved from the API
+ * @param query The queried domain
+*/
+export async function getDefederations(instanceList: Instance[], query: string): Promise<Instance[]> {
+    const instance = instanceList.find(inst => inst.domain === query);
+    if (!instance) return [];
+
+    switch (instance.software) {
+        case "lemmy":
+            return checkLemmy(instance as LemmyInstance, instanceList);
+        case "mastodon":
+            return checkMastodon(instance as MastodonInstance, instanceList);
+        default:
+            return [];
+    }
+}
+
+/**
+ * Get the defederation lits of a Lemmy instance
+ * @param instance The queried instance
+ * @param instanceList The list of instances retrieved from the API
+*/
+async function checkLemmy(instance: LemmyInstance, instanceList: Instance[]): Promise<Instance[]> {
+    const url = `https://${instance.domain}/api/v3/federated_instances`;
+
+    try {
+        const data = await fetchTimeout(url, TIMEOUT);
+        if (!data.ok) throw new Error(data.code.toString());
+
+        const blocklist = (data.data as LemmyFederation).federated_instances.blocked;
+
+        const res = new Array<Instance>();
+        for (const blocked of blocklist) {
+            const inst = instanceList.find(i => i.domain === blocked.domain);
+            if (inst) res.push(inst);
+            //@ts-ignore
+            else res.push({ domain: blocked.domain, name: blocked.domain, software: blocked.software, users: -1 })
+        }
+
+        res.sort((a, b) => b.users - a.users);
+
+        return res;
+    } catch (_) { return [] }
+
+    interface LemmyFederation {
+        federated_instances: {
+            blocked: { domain: string, software: string }[]
+        }
+    }
+}
+
+/**
+ * Get the defederation lits of a Mastodon instance
+ * @param instance The queried instance
+ * @param instanceList The list of instances retrieved from the API
+*/
+async function checkMastodon(instance: MastodonInstance, instanceList: Instance[]): Promise<Instance[]> {
+    const url = `https://${instance.domain}/api/v1/instance/domain_blocks`;
+
+    try {
+        const data = await fetchTimeout(url, TIMEOUT);
+        if (!data.ok) throw new Error(data.code.toString());
+
+        const blocklist = data.data as MastodonModerated[];
+
+        const res = new Array<Instance>();
+        for (const blocked of blocklist) {
+            if (blocked.severity === 'suspend') {
+                const inst = instanceList.find(i => i.domain === blocked.domain);
+                if (inst) res.push(inst);
+                //@ts-ignore
+                else res.push({ domain: blocked.domain, name: blocked.domain, software: blocked.software, users: -1 })
+            }
+        }
+
+        res.sort((a, b) => b.users - a.users);
+
+        return res;
+    } catch (_) { return [] }
+
+    interface MastodonModerated {
+        domain: string;
+        // digest: string;
+        severity: 'silence' | 'suspend';
+        // comment: string;
+    }
+}
