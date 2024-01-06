@@ -209,30 +209,32 @@
                 </div>
             </div>
 
-            <div class="collapse collapse-arrow bg-gray-400">
-                <input type="checkbox" name="my-accordion-2" aria-label="Expand / collapse" />
-                <div class="collapse-title text-xl font-medium">Instances with hidden blocklists</div>
-                <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
-                    <div class="col-span-full">
-                        {unknownCount} total {unknownCount === 1 ? "instance" : "instances"}
-                        <p class="font-sm mt-1">These instances have decided to keep their blocklists hidden to the public, therefore it's impossible to gather any insights on them.</p>
-                    </div>
+            {#if unknownCount > 0}
+                <div class="collapse collapse-arrow bg-gray-400">
+                    <input type="checkbox" name="my-accordion-2" aria-label="Expand / collapse" />
+                    <div class="collapse-title text-xl font-medium">Instances with hidden blocklists</div>
+                    <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+                        <div class="col-span-full">
+                            {unknownCount} total {unknownCount === 1 ? "instance" : "instances"}
+                            <p class="font-sm mt-1">These instances have decided to keep their blocklists hidden to the public, therefore it's impossible to gather any insights on them.</p>
+                        </div>
 
-                    {#each data.instances as instance}
-                        {#await instance then inst}
-                            {#if inst.unknown}
-                                <div class="card card-compact w-full bg-gray-500 shadow-md overflow-clip text-clip">
-                                    <div class="card-body">
-                                        <h2 class="card-title">{inst.name}</h2>
-                                        <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
-                                        <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
+                        {#each data.instances as instance}
+                            {#await instance then inst}
+                                {#if inst.unknown}
+                                    <div class="card card-compact w-full bg-gray-500 shadow-md overflow-clip text-clip">
+                                        <div class="card-body">
+                                            <h2 class="card-title">{inst.name}</h2>
+                                            <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
+                                            <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            {/if}
-                        {/await}
-                    {/each}
+                                {/if}
+                            {/await}
+                        {/each}
+                    </div>
                 </div>
-            </div>
+            {/if}
 
             {#if errorCount > 0}
                 <div class="collapse collapse-arrow bg-error">

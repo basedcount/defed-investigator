@@ -6,7 +6,10 @@ const MASTODON_USERS = 1000;
 export async function fetchInstances() {
     const [lemmy, mastodon] = await Promise.all([query('lemmy', LEMMY_USERS), query('mastodon', MASTODON_USERS)]);
 
-    return [...lemmy, ...mastodon];
+    const instances = [...lemmy, ...mastodon];
+    instances.sort((a, b) => b.users - a.users);
+
+    return instances;
 }
 
 async function query(software: Software, minimum: number) {

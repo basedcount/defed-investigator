@@ -98,7 +98,7 @@ async function checkMastodon(instance: MastodonInstance, query: string): Promise
     try {
         const [linkedData, moderatedData] = await Promise.all([fetchTimeout(urlLinked, TIMEOUT), fetchTimeout(urlModerated, TIMEOUT)]);
 
-        if (linkedData.code === 401 || moderatedData.code === 401 || moderatedData.code === 404) {
+        if (linkedData.code === 401 || linkedData.code === 404 || moderatedData.code === 401 || moderatedData.code === 404) {
             res.unknown = true;
         } else if (!linkedData.ok || !moderatedData.ok) {
             throw new Error();
