@@ -1,66 +1,64 @@
-import { parse } from 'csv-parse';
+//Instances with less than USERS users aren't counted (limits number of requests)
+const LEMMY_USERS = 1;
+const MASTODON_USERS = 50;
 
-const THRESHOLD = 2;    //Instances with less than THRESHOLD users aren't counted (limits number of requests)
-
-//Return a list of instance links and their names, fetched from the awesome-lemmy-instances GitHub repo
+//Return a list of instance links and their names, fetched from the Fediverse Observer GraphQL API
 export async function fetchInstances() {
-    const { instancesArr, usersArr } = await parseCSV();
-    let instances = arrayToObject(instancesArr, usersArr);
+    const [lemmy, mastodon] = await Promise.all([query('lemmy', LEMMY_USERS), query('mastodon', MASTODON_USERS)]);
 
-    instances = instances.filter(inst => inst.users >= THRESHOLD);
-
-    return instances;
+    return [...lemmy, ...mastodon];
 }
 
-//Fetch a CSV of all Lemmy instances from GitHub and parses it as an array of strings
-async function parseCSV() {
-    //Fetch list of instances from GitHub
-    const url = 'https://raw.githubusercontent.com/maltfield/awesome-lemmy-instances/main/awesome-lemmy-instances.csv';
-
-    //Parse the request
-    const res = await fetch(url);
-    const data = await res.text();
-
-    //Setup CSV parser and asynchronously parse each line
-    const parser = parse(data, { relax_quotes: true });
-    const instances = new Array<string>();
-    const users = new Array<number>();
-
-    for await (const record of parser) {
-        instances.push(record[0]);
-        users.push(record[6]);
+async function query(software: Software, minimum: number) {
+    const query = `
+    query {
+        nodes(status: "UP" softwarename: "${software}" minusersmonthly: ${minimum}) 
+        {domain metatitle active_users_monthly        }
     }
+    `;
 
-    return { instancesArr: instances, usersArr: users };
-}
-
-//Converts an array of strings to  an array of objects of the Instance interface
-function arrayToObject(arr: string[], users: number[]) {
-    arr.splice(0, 1); //Remove first element (CSV heading)
-    users.splice(0, 1); //Remove first element (CSV heading)
-
-    const regex = /\[(.+)\]\((\S+)\)/;    //Regex to capture markdown links eg: [name](link)
-
-    const res: Instance[] = arr.map((line, i) => {
-        const match = line.match(regex);
-
-        if (match == null) throw new Error('Badly formatted CSV');
-        if (match.length < 3) throw new Error('Badly formatted CSV');
-
-        return {
-            name: match[1],
-            url: match[2],
-            users: users[i],
-        }
-
+    const res = await fetch('https://api.vader.dev/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ query }),
     });
 
-    return res;
+    const instances = await res.json() as InstanceAPI;
+
+    return instances.data.nodes.map(instance => {
+        let name: string;
+        if (instance.metatitle) name = instance.metatitle.split(' - ')[0];
+        else name = instance.domain;
+
+        return {
+            name,
+            software,
+            url: instance.domain,
+            users: instance.active_users_monthly,
+        }
+    }) satisfies Instance[];
 }
 
-//Represents a Lemmy instance
+//Represents an instance as returned by the API
+interface InstanceAPI {
+    data: {
+        nodes: {
+            domain: string
+            metatitle: string
+            active_users_monthly: number
+        }[]
+    }
+}
+
+type Software = 'lemmy' | 'mastodon';
+
+//Represents a Fediverse instance
 export interface Instance {
     name: string;
     url: string;
     users: number;
+    software: Software;
 }
