@@ -24,10 +24,6 @@
             errorCount++;
         });
     });
-
-    function trimUrl(url: string) {
-        return url.substring(8); //From "https://example.com" return "example.com"
-    }
 </script>
 
 <svelte:head>
@@ -78,7 +74,7 @@
                                 <div class="card card-compact w-full bg-secondary-focus shadow-md overflow-clip text-clip">
                                     <div class="card-body">
                                         <h2 class="card-title">{inst.name}</h2>
-                                        <a class="link max-w-fit mx-2 md:mx-0" href={inst.url}>{trimUrl(inst.url)}</a>
+                                        <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
                                         <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
                                     </div>
                                 </div>
@@ -107,7 +103,7 @@
                                 <div class="card card-compact w-full bg-primary-focus shadow-md overflow-clip text-clip">
                                     <div class="card-body">
                                         <h2 class="card-title">{inst.name}</h2>
-                                        <a class="link max-w-fit mx-2 md:mx-0" href={inst.url}>{trimUrl(inst.url)}</a>
+                                        <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
                                         <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
                                     </div>
                                 </div>
@@ -140,7 +136,7 @@
                         <div class="card card-compact w-full bg-green-600 shadow-md overflow-clip text-clip">
                             <div class="card-body">
                                 <h2 class="card-title">{inst.name}</h2>
-                                <a class="link max-w-fit mx-2 md:mx-0" href={inst.url}>{trimUrl(inst.url)}</a>
+                                <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
                                 <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
                             </div>
                         </div>
@@ -164,7 +160,7 @@
                                 <div class="card card-compact w-full bg-accent-focus shadow-md overflow-clip text-clip">
                                     <div class="card-body">
                                         <h2 class="card-title">{inst.name}</h2>
-                                        <a class="link max-w-fit mx-2 md:mx-0" href={inst.url}>{trimUrl(inst.url)}</a>
+                                        <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
                                         <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
                                     </div>
                                 </div>
@@ -189,7 +185,7 @@
                                     <div class="card card-compact w-full bg-red-400 shadow-md overflow-clip text-clip">
                                         <div class="card-body">
                                             <h2 class="card-title">{inst.name}</h2>
-                                            <a class="link max-w-fit mx-2 md:mx-0" href={inst.url}>{trimUrl(inst.url)}</a>
+                                            <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
                                             <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
                                         </div>
                                     </div>

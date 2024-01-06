@@ -1,75 +1,17 @@
-import type { Instance as InstanceInit } from "$lib/instanceList";
-import { LemmyHttp, type GetFederatedInstancesResponse } from 'lemmy-js-client';
-
-const TIMEOUT = 60000;
+import { checkFederation } from "$lib/federation";
 
 export async function load({ data }) {
     return {
         name: data.name,
-        instances: data.instances.map(el => checkFederation(data.name, el)),
-        blockedBy: await getBlockedBy(data.name, data.instances),
+        instances: data.instances.map(inst => checkFederation(inst, data.name)),
+        blockedBy: [],
+        // blockedBy: await getBlockedBy(data.name, data.instances),
         total: data.instances.length,
         warning: data.warning
     };
 }
 
-//Check whether an instance is federated with the queried instance
-async function checkFederation(name: string, instance: InstanceInit): Promise<Instance> {
-    let linked: boolean | undefined;
-    let blocked: boolean | undefined;
-    let notAllowed: boolean | undefined;
-    let error: boolean;
-
-    try {
-        const federation = await getFederationTimeout(instance.url, TIMEOUT);
-
-        const blockedList = federation.federated_instances?.blocked;
-        const linkedList = federation.federated_instances?.linked;
-        const allowList = federation.federated_instances?.allowed;
-
-        if (blockedList === undefined) throw new Error();
-        if (linkedList === undefined) throw new Error();
-        if (allowList === undefined) throw new Error();
-
-        if (blockedList.map(instance => instance.domain).includes(name)) {
-            blocked = true;
-        } else {
-            blocked = false;
-        }
-
-        if (linkedList.map(instance => instance.domain).includes(name)) {
-            linked = true;
-        } else {
-            linked = false;
-        }
-
-        if (allowList.length > 0 && instance.url !== `https://${name}`) {
-            if (!allowList.map(instance => instance.domain).includes(name)) {
-                notAllowed = true;
-                linked = false;
-            } else {
-                notAllowed = false;
-            }
-        } else {
-            notAllowed = false;
-        }
-
-        error = false;
-    } catch (e) {
-        error = true;
-    }
-
-    return {
-        name: instance.name,
-        url: instance.url,
-        users: instance.users,
-        linked,
-        blocked,
-        notAllowed,
-        error,
-    };
-}
-
+/*
 //Returns the queried instance's blocklist
 async function getBlockedBy(name: string, instances: InstanceInit[]) {
     const url = `https://${name}`;
@@ -85,10 +27,10 @@ async function getBlockedBy(name: string, instances: InstanceInit[]) {
 
     for (const blocked of blockedList) {
         for (const inst of instances) {
-            if (inst.url === blocked) {
+            if (inst.domain === blocked) {
                 res.push({
                     name: inst.name,
-                    url: inst.url,
+                    url: inst.domain,
                     users: inst.users,
                     blocked: undefined,
                     linked: undefined,
@@ -116,7 +58,7 @@ async function getFederationTimeout(url: string, timeout: number): Promise<GetFe
     const timeoutPromise = new Promise<GetFederatedInstancesResponse>((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout));
     return Promise.race([federationPromise, timeoutPromise]);
 }
-
+*/
 
 interface Instance {
     name: string;                   //Instance name
