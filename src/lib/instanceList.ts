@@ -1,13 +1,12 @@
 //Instances with less than USERS users aren't counted (limits number of requests)
-const LEMMY_USERS = 1000;
-const MASTODON_USERS = 50;
+const LEMMY_USERS = 100;
+const MASTODON_USERS = 1000;
 
 //Return a list of instance links and their names, fetched from the Fediverse Observer GraphQL API
 export async function fetchInstances() {
     const [lemmy, mastodon] = await Promise.all([query('lemmy', LEMMY_USERS), query('mastodon', MASTODON_USERS)]);
 
-    return [...lemmy];
-    // return [...lemmy, ...mastodon];
+    return [...lemmy, ...mastodon];
 }
 
 async function query(software: Software, minimum: number) {

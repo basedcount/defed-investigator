@@ -8,6 +8,8 @@
     let blockedCount = 0;
     let linkedCount = 0;
     let notAllowedCount = 0;
+    let silencedCount = 0;
+    let unknownCount = 0;
     let errorCount = 0;
 
     data.instances.forEach((p) => {
@@ -17,6 +19,8 @@
             if (val.linked) linkedCount++;
             if (val.notAllowed) notAllowedCount++;
             if (val.error) errorCount++;
+            if (val.silenced) silencedCount++;
+            if (val.unknown) unknownCount++;
         });
 
         p.catch(() => {
@@ -113,6 +117,41 @@
                 </div>
             </div>
 
+            {#if silencedCount > 0}
+                <div class="collapse collapse-arrow bg-purple-500">
+                    <input type="checkbox" name="my-accordion-2" aria-label="Expand / collapse" />
+                    <div class="collapse-title text-xl font-medium">
+                        Instances with limited federation with <span class="font-mono">{data.name}</span>
+                    </div>
+                    <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+                        <div class="col-span-full">
+                            {silencedCount} total {silencedCount === 1 ? "instance" : "instances"}
+                            <p class="font-sm mt-1">
+                                These instances are federated with <span class="font-mono">{data.name}</span> but chose to hide it from their public front pages.
+                            </p>
+                        </div>
+
+                        {#each data.instances as instance}
+                            {#await instance then inst}
+                                {#if inst.silenced}
+                                    <div class="card card-compact w-full bg-purple-600 shadow-md overflow-clip text-clip">
+                                        <div class="card-body">
+                                            <h2 class="card-title">{inst.name}</h2>
+                                            <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
+                                            <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
+                                        </div>
+                                    </div>
+                                {/if}
+                            {/await}
+                        {/each}
+
+                        <div class="col-span-full text-sm italic">
+                            For more information on this federation mode, check out the <a class="link" href="https://docs.joinmastodon.org/admin/moderation/#limit-server">Mastodon documentation</a>.
+                        </div>
+                    </div>
+                </div>
+            {/if}
+
             <div class="collapse collapse-arrow bg-green-500">
                 <input type="checkbox" name="my-accordion-2" aria-label="Expand / collapse" />
                 <div class="collapse-title text-xl font-medium">
@@ -158,6 +197,31 @@
                         {#await instance then inst}
                             {#if inst.linked}
                                 <div class="card card-compact w-full bg-accent-focus shadow-md overflow-clip text-clip">
+                                    <div class="card-body">
+                                        <h2 class="card-title">{inst.name}</h2>
+                                        <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
+                                        <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
+                                    </div>
+                                </div>
+                            {/if}
+                        {/await}
+                    {/each}
+                </div>
+            </div>
+
+            <div class="collapse collapse-arrow bg-gray-400">
+                <input type="checkbox" name="my-accordion-2" aria-label="Expand / collapse" />
+                <div class="collapse-title text-xl font-medium">Instances with hidden blocklists</div>
+                <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+                    <div class="col-span-full">
+                        {unknownCount} total {unknownCount === 1 ? "instance" : "instances"}
+                        <p class="font-sm mt-1">These instances have decided to keep their blocklists hidden to the public, therefore it's impossible to gather any insights on them.</p>
+                    </div>
+
+                    {#each data.instances as instance}
+                        {#await instance then inst}
+                            {#if inst.unknown}
+                                <div class="card card-compact w-full bg-gray-500 shadow-md overflow-clip text-clip">
                                     <div class="card-body">
                                         <h2 class="card-title">{inst.name}</h2>
                                         <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
