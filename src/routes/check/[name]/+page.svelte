@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { PageData } from "./$types";
+    import Instance from "./instance.svelte";
 
     export let data: PageData;
 
@@ -75,13 +76,7 @@
                     {#each data.instances as instance}
                         {#await instance then inst}
                             {#if inst.blocked}
-                                <div class="card card-compact w-full bg-secondary-focus shadow-md overflow-clip text-clip">
-                                    <div class="card-body">
-                                        <h2 class="card-title">{inst.name}</h2>
-                                        <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
-                                        <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
-                                    </div>
-                                </div>
+                                <Instance {inst} className={"bg-secondary-focus"} />
                             {/if}
                         {/await}
                     {/each}
@@ -104,13 +99,7 @@
                     {#each data.instances as instance}
                         {#await instance then inst}
                             {#if inst.notAllowed}
-                                <div class="card card-compact w-full bg-primary-focus shadow-md overflow-clip text-clip">
-                                    <div class="card-body">
-                                        <h2 class="card-title">{inst.name}</h2>
-                                        <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
-                                        <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
-                                    </div>
-                                </div>
+                                <Instance {inst} className={"bg-primary-focus"} />
                             {/if}
                         {/await}
                     {/each}
@@ -134,13 +123,7 @@
                         {#each data.instances as instance}
                             {#await instance then inst}
                                 {#if inst.silenced}
-                                    <div class="card card-compact w-full bg-purple-600 shadow-md overflow-clip text-clip">
-                                        <div class="card-body">
-                                            <h2 class="card-title">{inst.name}</h2>
-                                            <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
-                                            <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
-                                        </div>
-                                    </div>
+                                    <Instance {inst} className={"bg-purple-600"} />
                                 {/if}
                             {/await}
                         {/each}
@@ -172,17 +155,7 @@
                     </div>
 
                     {#each data.blockedBy as inst}
-                        <div class="card card-compact w-full bg-green-600 shadow-md overflow-clip text-clip">
-                            <div class="card-body">
-                                <h2 class="card-title">{inst.name}</h2>
-                                <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
-                                {#if inst.users > 0}
-                                    <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
-                                {:else}
-                                    <p class="invisible">Unavailable</p>
-                                {/if}
-                            </div>
-                        </div>
+                        <Instance {inst} className={"bg-green-600"} />
                     {/each}
                 </div>
             </div>
@@ -200,13 +173,7 @@
                     {#each data.instances as instance}
                         {#await instance then inst}
                             {#if inst.linked}
-                                <div class="card card-compact w-full bg-accent-focus shadow-md overflow-clip text-clip">
-                                    <div class="card-body">
-                                        <h2 class="card-title">{inst.name}</h2>
-                                        <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
-                                        <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
-                                    </div>
-                                </div>
+                                <Instance {inst} className={"bg-accent-focus"} />
                             {/if}
                         {/await}
                     {/each}
@@ -226,13 +193,7 @@
                         {#each data.instances as instance}
                             {#await instance then inst}
                                 {#if inst.unknown}
-                                    <div class="card card-compact w-full bg-gray-500 shadow-md overflow-clip text-clip">
-                                        <div class="card-body">
-                                            <h2 class="card-title">{inst.name}</h2>
-                                            <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
-                                            <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
-                                        </div>
-                                    </div>
+                                    <Instance {inst} className={"bg-gray-500"} />
                                 {/if}
                             {/await}
                         {/each}
@@ -252,13 +213,7 @@
                         {#each data.instances as instance}
                             {#await instance then inst}
                                 {#if inst.error}
-                                    <div class="card card-compact w-full bg-red-400 shadow-md overflow-clip text-clip">
-                                        <div class="card-body">
-                                            <h2 class="card-title">{inst.name}</h2>
-                                            <a class="link max-w-fit mx-2 md:mx-0" href="https://{inst.domain}">{inst.domain}</a>
-                                            <p>{inst.users} {inst.users === 1 ? "active user" : "active users"}</p>
-                                        </div>
-                                    </div>
+                                    <Instance {inst} className={"bg-red-400"} />
                                 {/if}
                             {/await}
                         {/each}
