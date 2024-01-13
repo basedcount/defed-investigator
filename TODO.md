@@ -1,5 +1,5 @@
-- move card to standalone component, pass color as prop
 - add software icon as background to cards
+- convert pill and software images to webp
 - add filtering checkboxes in query page
 - await defederation promise on client
 - increase instanceList threshold, figure out way to make requests in batches
