@@ -141,22 +141,26 @@
                     Instances defederated by <span class="font-mono">{data.name}</span>
                 </div>
                 <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
-                    <div class="col-span-full">
-                        {data.blockedBy.length} total {data.blockedBy.length === 1 ? "instance" : "instances"}
-                        <p class="font-sm mt-1">
-                            {#if data.blockedBy.length > 1}
-                                <span class="font-mono">{data.name}</span> has defederated from these instances.
-                            {:else if data.blockedBy.length === 1}
-                                <span class="font-mono">{data.name}</span> has defederated from this instance.
-                            {:else}
-                                <span class="font-mono">{data.name}</span> hasn't defederated from any instances.
-                            {/if}
-                        </p>
-                    </div>
+                    {#await data.blockedBy}
+                        <div class="col-span-full">Loading...</div>
+                    {:then blockedBy}
+                        <div class="col-span-full">
+                            {blockedBy.length} total {blockedBy.length === 1 ? "instance" : "instances"}
+                            <p class="font-sm mt-1">
+                                {#if blockedBy.length > 1}
+                                    <span class="font-mono">{data.name}</span> has defederated from these instances.
+                                {:else if blockedBy.length === 1}
+                                    <span class="font-mono">{data.name}</span> has defederated from this instance.
+                                {:else}
+                                    <span class="font-mono">{data.name}</span> hasn't defederated from any instances.
+                                {/if}
+                            </p>
+                        </div>
 
-                    {#each data.blockedBy as inst}
-                        <Instance {inst} className={"bg-green-600"} />
-                    {/each}
+                        {#each blockedBy as inst}
+                            <Instance {inst} className={"bg-green-600"} />
+                        {/each}
+                    {/await}
                 </div>
             </div>
 

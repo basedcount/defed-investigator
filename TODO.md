@@ -1,6 +1,5 @@
 - convert pill and software images to webp
 - add filtering checkboxes in query page
-- await defederation promise on client
 - increase instanceList threshold, figure out way to make requests in batches
 - bug: when software is unknown no defed info can be gathered
   - the list has many holes, so it happens fairly often (eg: lemm.ee, lemmy.basedcount.com)
