@@ -1,4 +1,3 @@
-- add software icon as background to cards
 - convert pill and software images to webp
 - add filtering checkboxes in query page
 - await defederation promise on client
