@@ -1,12 +1,19 @@
-//Instances with less than USERS users aren't counted (limits number of requests)
-const LEMMY_USERS = 100;
-const MASTODON_USERS = 1000;
+//Instances with less than *_USERS users aren't queried (limits number of requests)
+const LEMMY_USERS = 1000;
+const MASTODON_USERS = 10000;
+const PLEROMA_USERS = 10;
+const AKKOMA_USERS = 10;
 
 //Return a list of instance links and their names, fetched from the Fediverse Observer GraphQL API
 export async function fetchInstances() {
-    const [lemmy, mastodon] = await Promise.all([query('lemmy', LEMMY_USERS), query('mastodon', MASTODON_USERS)]);
+    const [lemmy, mastodon, pleroma, akkoma] = await Promise.all([
+        query('lemmy', LEMMY_USERS),
+        query('mastodon', MASTODON_USERS),
+        query('pleroma', PLEROMA_USERS),
+        query('akkoma', AKKOMA_USERS),
+    ]);
 
-    const instances = [...lemmy, ...mastodon];
+    const instances = [...lemmy, ...mastodon, ...pleroma, ...akkoma];
     instances.sort((a, b) => b.users - a.users);
 
     return instances;
@@ -16,7 +23,7 @@ async function query(software: Software, minimum: number) {
     const query = `
     query {
         nodes(status: "UP" softwarename: "${software}" minusersmonthly: ${minimum}) 
-        {domain metatitle active_users_monthly        }
+        {domain metatitle active_users_monthly}
     }
     `;
 
@@ -56,7 +63,7 @@ interface InstanceAPI {
     }
 }
 
-type Software = 'lemmy' | 'mastodon';
+type Software = 'lemmy' | 'mastodon' | 'pleroma' | 'akkoma';
 
 //Represents a Fediverse instance
 export interface Instance {

@@ -18,6 +18,12 @@ export async function checkFederation(instance: InstanceInit, query: string): Pr
         case "mastodon":
             response = await checkMastodon(instance as MastodonInstance, query);
             break;
+        case "pleroma": // Pleroma implements the Mastodon API
+            response = await checkMastodon(instance as PleromaInstance, query);
+            break;
+        case "akkoma": // Akkoma implements the Mastodon API
+            response = await checkMastodon(instance as AkkomaInstance, query);
+            break;
         default:
             response = {
                 blocked: undefined,
@@ -82,7 +88,7 @@ async function checkLemmy(instance: LemmyInstance, query: string): Promise<Respo
  * @param instance The instance retrieved from the API
  * @param query The queried domain
 */
-async function checkMastodon(instance: MastodonInstance, query: string): Promise<Response> {
+async function checkMastodon(instance: MastodonInstance | PleromaInstance | AkkomaInstance, query: string): Promise<Response> {
     const urlLinked = `https://${instance.domain}/api/v1/instance/peers`;
     const urlModerated = `https://${instance.domain}/api/v1/instance/domain_blocks`;
 
@@ -132,6 +138,8 @@ async function checkMastodon(instance: MastodonInstance, query: string): Promise
 
 export interface LemmyInstance extends InstanceInit { software: 'lemmy' }
 export interface MastodonInstance extends InstanceInit { software: 'mastodon' }
+export interface PleromaInstance extends InstanceInit { software: 'pleroma' }
+export interface AkkomaInstance extends InstanceInit { software: 'akkoma' }
 
 interface Response {
     linked: boolean | undefined;    //Instance linked with queried instance

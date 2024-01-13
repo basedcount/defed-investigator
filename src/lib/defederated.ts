@@ -1,6 +1,6 @@
 import type { Instance } from "./instanceList";
 import { fetchTimeout } from "./fetch";
-import type { LemmyInstance, MastodonInstance } from "./federation";
+import type { AkkomaInstance, LemmyInstance, MastodonInstance, PleromaInstance } from "./federation";
 
 const TIMEOUT = 60000;
 
@@ -18,6 +18,10 @@ export async function getDefederations(instanceList: Instance[], query: string):
             return checkLemmy(instance as LemmyInstance, instanceList);
         case "mastodon":
             return checkMastodon(instance as MastodonInstance, instanceList);
+        case "pleroma":
+            return checkMastodon(instance as PleromaInstance, instanceList);
+        case "akkoma":
+            return checkMastodon(instance as AkkomaInstance, instanceList);
         default:
             return [];
     }
@@ -62,7 +66,7 @@ async function checkLemmy(instance: LemmyInstance, instanceList: Instance[]): Pr
  * @param instance The queried instance
  * @param instanceList The list of instances retrieved from the API
 */
-async function checkMastodon(instance: MastodonInstance, instanceList: Instance[]): Promise<Instance[]> {
+async function checkMastodon(instance: MastodonInstance | PleromaInstance | AkkomaInstance, instanceList: Instance[]): Promise<Instance[]> {
     const url = `https://${instance.domain}/api/v1/instance/domain_blocks`;
 
     try {
