@@ -32,11 +32,11 @@
                 </button>
             </form>
 
-            <div class="py-6 text-sm text-acc">
-                <p>
-                    <span class="font-bold text-accent-focus">How does this work?</span> The Investigator will query every Lemmy instance through your browser. The full list of instances is available in <a href="https://github.com/maltfield/awesome-lemmy-instances" class="link">this repository</a>.
-                </p>
-            </div>
+            <p class="py-6 text-sm">
+                <span class="font-bold text-accent-focus">How does this work?</span>
+                The Investigator will query every Fediverse instance through your browser. The full list of instances is retrieved from the
+                <a href="https://fediverse.observer/list" class="link">Fediverse Observer</a>.
+            </p>
         </div>
     </div>
 </div>

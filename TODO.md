@@ -1,6 +1,3 @@
-- smoothly increase values instead of loading one batch at a time
-    - try chaining .then, increase total
-    - try rewriting array every time (reactivity and whatnot) but consider race conditions
 - convert pill and software images to webp
 - add filtering checkboxes in query page
 - bug: when software is unknown no defed info can be gathered
