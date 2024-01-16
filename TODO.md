@@ -1,6 +1,8 @@
+- smoothly increase values instead of loading one batch at a time
+    - try chaining .then, increase total
+    - try rewriting array every time (reactivity and whatnot) but consider race conditions
 - convert pill and software images to webp
 - add filtering checkboxes in query page
-- increase instanceList threshold, figure out way to make requests in batches
 - bug: when software is unknown no defed info can be gathered
   - the list has many holes, so it happens fairly often (eg: lemm.ee, lemmy.basedcount.com)
   - maybe when the current API gets promoted to production there will be fewer holes

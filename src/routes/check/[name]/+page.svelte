@@ -1,8 +1,13 @@
 <script lang="ts">
     import type { PageData } from "./$types";
+    import { checkFederation } from "$lib/federation";
+    import type { Instance as Instance_t } from "$lib/federation";
     import Instance from "./instance.svelte";
+    import { onMount } from "svelte";
 
     export let data: PageData;
+
+    const CHUNK_SIZE = 50;
 
     let progress = 1;
     let percentage = 0;
@@ -13,21 +18,29 @@
     let unknownCount = 0;
     let errorCount = 0;
 
-    data.instances.forEach((p) => {
-        p.then((val) => {
-            percentage = (progress++ / data.total) * 100;
-            if (val.blocked) blockedCount++;
-            if (val.linked) linkedCount++;
-            if (val.notAllowed) notAllowedCount++;
-            if (val.error) errorCount++;
-            if (val.silenced) silencedCount++;
-            if (val.unknown) unknownCount++;
-        });
+    let instances = new Array<Instance_t>();
+    onMount(async () => {
+        for (let i = 0; i < data.instances.length; i += CHUNK_SIZE) {
+            const chunk = data.instances.slice(i, i + CHUNK_SIZE);
+            const chunkResults = await Promise.allSettled(chunk.map((inst) => checkFederation(inst, data.name)));
+            const successes = new Array<Instance_t>();
 
-        p.catch(() => {
-            percentage = (progress++ / data.total) * 100;
-            errorCount++;
-        });
+            for (const inst of chunkResults) {
+                if (inst.status === "rejected") continue;
+                percentage = (progress++ / data.total) * 100;
+
+                if (inst.value.blocked) blockedCount++;
+                if (inst.value.linked) linkedCount++;
+                if (inst.value.notAllowed) notAllowedCount++;
+                if (inst.value.error) errorCount++;
+                if (inst.value.silenced) silencedCount++;
+                if (inst.value.unknown) unknownCount++;
+
+                successes.push(inst.value);
+            }
+
+            instances = [...instances, ...successes];
+        }
     });
 </script>
 
@@ -73,12 +86,10 @@
                         {blockedCount} total {blockedCount === 1 ? "instance" : "instances"}
                     </div>
 
-                    {#each data.instances as instance}
-                        {#await instance then inst}
-                            {#if inst.blocked}
-                                <Instance {inst} className={"bg-secondary-focus"} />
-                            {/if}
-                        {/await}
+                    {#each instances as inst}
+                        {#if inst.blocked}
+                            <Instance {inst} className={"bg-secondary-focus"} />
+                        {/if}
                     {/each}
                 </div>
             </div>
@@ -96,12 +107,10 @@
                         </p>
                     </div>
 
-                    {#each data.instances as instance}
-                        {#await instance then inst}
-                            {#if inst.notAllowed}
-                                <Instance {inst} className={"bg-primary-focus"} />
-                            {/if}
-                        {/await}
+                    {#each instances as inst}
+                        {#if inst.notAllowed}
+                            <Instance {inst} className={"bg-primary-focus"} />
+                        {/if}
                     {/each}
                 </div>
             </div>
@@ -120,12 +129,10 @@
                             </p>
                         </div>
 
-                        {#each data.instances as instance}
-                            {#await instance then inst}
-                                {#if inst.silenced}
-                                    <Instance {inst} className={"bg-purple-600"} />
-                                {/if}
-                            {/await}
+                        {#each instances as inst}
+                            {#if inst.silenced}
+                                <Instance {inst} className={"bg-purple-600"} />
+                            {/if}
                         {/each}
 
                         <div class="col-span-full text-sm italic">
@@ -174,12 +181,10 @@
                         {linkedCount} total {linkedCount === 1 ? "instance" : "instances"}
                     </div>
 
-                    {#each data.instances as instance}
-                        {#await instance then inst}
-                            {#if inst.linked}
-                                <Instance {inst} className={"bg-accent-focus"} />
-                            {/if}
-                        {/await}
+                    {#each instances as inst}
+                        {#if inst.linked}
+                            <Instance {inst} className={"bg-accent-focus"} />
+                        {/if}
                     {/each}
                 </div>
             </div>
@@ -194,12 +199,10 @@
                             <p class="font-sm mt-1">These instances have decided to keep their blocklists hidden to the public, therefore it's impossible to gather any insights on them.</p>
                         </div>
 
-                        {#each data.instances as instance}
-                            {#await instance then inst}
-                                {#if inst.unknown}
-                                    <Instance {inst} className={"bg-gray-500"} />
-                                {/if}
-                            {/await}
+                        {#each instances as inst}
+                            {#if inst.unknown}
+                                <Instance {inst} className={"bg-gray-500"} />
+                            {/if}
                         {/each}
                     </div>
                 </div>
@@ -214,12 +217,10 @@
                             {errorCount} total {errorCount === 1 ? "instance" : "instances"}
                         </div>
 
-                        {#each data.instances as instance}
-                            {#await instance then inst}
-                                {#if inst.error}
-                                    <Instance {inst} className={"bg-red-400"} />
-                                {/if}
-                            {/await}
+                        {#each instances as inst}
+                            {#if inst.error}
+                                <Instance {inst} className={"bg-red-400"} />
+                            {/if}
                         {/each}
                         <div class="col-span-full text-sm italic">
                             <p>

@@ -1,8 +1,8 @@
 //Instances with less than *_USERS users aren't queried (limits number of requests)
-const LEMMY_USERS = 1000;
-const MASTODON_USERS = 10000;
-const PLEROMA_USERS = 10;
-const AKKOMA_USERS = 10;
+const LEMMY_USERS = 2;
+const MASTODON_USERS = 20;
+const PLEROMA_USERS = 2;
+const AKKOMA_USERS = 2;
 
 //Return a list of instance links and their names, fetched from the Fediverse Observer GraphQL API
 export async function fetchInstances() {
