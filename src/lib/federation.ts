@@ -1,7 +1,7 @@
 import type { Instance as InstanceInit } from "./instanceList";
 import { fetchTimeout } from "./fetch";
 
-const TIMEOUT = 20 * 1000;
+const TIMEOUT = 5 * 1000;
 
 /**
  * Checks the federation status between an instance (from the API) and the queried domain

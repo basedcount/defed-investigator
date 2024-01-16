@@ -21,32 +21,30 @@
     let instances = new Array<Instance_t>();
     onMount(async () => {
         for (let i = 0; i < data.instances.length; i += CHUNK_SIZE) {
-            const chunk = data.instances.slice(i, i + CHUNK_SIZE);
-            const chunkResults = await Promise.allSettled(chunk.map((inst) => checkFederation(inst, data.name)));
-            const successes = new Array<Instance_t>();
+            const chunk = data.instances.slice(i, i + CHUNK_SIZE).map((inst) => checkFederation(inst, data.name));
+            
+            chunk.forEach((inst) => {
+                inst.then((value) => {
+                    percentage = (progress++ / data.total) * 100;
 
-            for (const inst of chunkResults) {
-                if (inst.status === "rejected") continue;
-                percentage = (progress++ / data.total) * 100;
+                    if (value.blocked) blockedCount++;
+                    if (value.linked) linkedCount++;
+                    if (value.notAllowed) notAllowedCount++;
+                    if (value.error) errorCount++;
+                    if (value.silenced) silencedCount++;
+                    if (value.unknown) unknownCount++;
 
-                if (inst.value.blocked) blockedCount++;
-                if (inst.value.linked) linkedCount++;
-                if (inst.value.notAllowed) notAllowedCount++;
-                if (inst.value.error) errorCount++;
-                if (inst.value.silenced) silencedCount++;
-                if (inst.value.unknown) unknownCount++;
+                    instances = [...instances, value];
+                });
+            });
 
-                successes.push(inst.value);
-            }
-
-            instances = [...instances, ...successes];
+            await Promise.allSettled(chunk);
         }
     });
 </script>
 
 <svelte:head>
-    <title>Info on {data.name}</title>
-    <meta name="description" content="" />
+    <title>Statistics for {data.name}</title>
 </svelte:head>
 
 <main class="min-h-[calc(100vh-4rem)] w-full bg-base-200 pb-6">
