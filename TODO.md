@@ -1,1 +1,0 @@
-- convert pill and software images to webp
