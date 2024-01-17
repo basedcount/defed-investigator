@@ -17,15 +17,13 @@
 
             <form class="w-full flex flex-col" method="get" action="/check">
                 <div class="flex flex-row place-content-center gap-x-2">
-                    <input type="text" placeholder="lemmy.example.com" name="name" required class="input input-bordered input-primary w-full max-w-xs" />
+                    <input type="text" placeholder="lemmy.example.com" name="name" required autocomplete="off" autocapitalize="off" class="input input-bordered input-primary w-full max-w-xs" />
                     <button type="submit" class="btn btn-outline btn-primary" aria-label="Search">
                         <i class="bx bx-search-alt text-xl"></i>
                     </button>
                 </div>
                 <div class="grid grid-cols-4 max-w-md mx-auto gap-x-2">
-                    <span class="col-span-full justify-self-start mt-2">
-                        Query the following softwares:
-                    </span>
+                    <span class="col-span-full justify-self-start mt-2"> Query the following softwares: </span>
                     {#each softwareList as software}
                         <label class="cursor-pointer label justify-normal gap-x-1">
                             <input type="checkbox" value={software.name} class="checkbox checkbox-primary" bind:group={softwares} />
@@ -33,7 +31,7 @@
                         </label>
                     {/each}
                 </div>
-                <input type="hidden" value={softwares} name="software">
+                <input type="hidden" value={softwares} name="software" />
             </form>
 
             <p class="py-6 text-sm">

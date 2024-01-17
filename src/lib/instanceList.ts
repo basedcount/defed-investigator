@@ -22,7 +22,7 @@ async function query(software: Software, minimum: number) {
     }
     `;
 
-    const res = await fetch('https://api.vader.dev/', {
+    const res = await fetch('https://api.fediverse.observer/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
