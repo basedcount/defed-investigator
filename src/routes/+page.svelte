@@ -1,19 +1,9 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
+    import { softwareList } from "$lib/software";
 
-    let instance: string;
-
-    function query() {
-        if (instance.length > 0) goto(`/check/${removeProtocol(instance).toLowerCase()}`);
-    }
-
-    //If the user submitted URL includes the protocol, cut it out
-    function removeProtocol(url: string) {
-        if (url.startsWith("http://")) return url.slice(7);
-        else if (url.startsWith("https://")) return url.slice(8);
-
-        return url;
-    }
+    //This is sent to the server. First mapped as all instances to check all boxes.
+    //As boxes are unchecked, they get reoved from here
+    let softwares = softwareList.map((s) => s.name);
 </script>
 
 <div class="hero min-h-[calc(100vh-4rem)] bg-base-200">
@@ -25,11 +15,22 @@
                 <p>Enter the domain (URL) of your instance and press enter.</p>
             </div>
 
-            <form on:submit|preventDefault={query} class="w-full flex flex-row place-content-center gap-x-2">
-                <input type="text" placeholder="lemmy.example.com" class="input input-bordered input-primary w-full max-w-xs" bind:value={instance} />
-                <button class="btn btn-outline btn-primary" aria-label="Search">
-                    <i class="bx bx-search-alt text-xl"></i>
-                </button>
+            <form class="w-full flex flex-col" method="get" action="/check">
+                <div class="flex flex-row place-content-center gap-x-2">
+                    <input type="text" placeholder="lemmy.example.com" name="name" required class="input input-bordered input-primary w-full max-w-xs" />
+                    <button type="submit" class="btn btn-outline btn-primary" aria-label="Search">
+                        <i class="bx bx-search-alt text-xl"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-4">
+                    {#each softwareList as software}
+                        <label class="cursor-pointer label justify-normal gap-x-2">
+                            <input type="checkbox" value={software.name} class="checkbox checkbox-secondary" bind:group={softwares} />
+                            <span class="label-text capitalize">{software.name}</span>
+                        </label>
+                    {/each}
+                </div>
+                <input type="hidden" value={softwares} name="software">
             </form>
 
             <p class="py-6 text-sm">

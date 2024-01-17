@@ -1,19 +1,14 @@
-//Instances with less than *_USERS users aren't queried (limits number of requests)
-const LEMMY_USERS = 2;
-const MASTODON_USERS = 20;
-const PLEROMA_USERS = 2;
-const AKKOMA_USERS = 2;
+import { softwareList, type Software } from "./software";
 
 //Return a list of instance links and their names, fetched from the Fediverse Observer GraphQL API
-export async function fetchInstances() {
-    const [lemmy, mastodon, pleroma, akkoma] = await Promise.all([
-        query('lemmy', LEMMY_USERS),
-        query('mastodon', MASTODON_USERS),
-        query('pleroma', PLEROMA_USERS),
-        query('akkoma', AKKOMA_USERS),
-    ]);
+export async function fetchInstances(softwareQuery: Software[]) {
+    //Extract queried softwares from softwareList
+    const softwares = softwareList.filter(s => softwareQuery.includes(s.name));
+    
+    //Query them
+    const res = await Promise.all(softwares.map(software => query(software.name, software.users)));
 
-    const instances = [...lemmy, ...mastodon, ...pleroma, ...akkoma];
+    const instances = res.flat();
     instances.sort((a, b) => b.users - a.users);
 
     return instances;
@@ -62,8 +57,6 @@ interface InstanceAPI {
         }[]
     }
 }
-
-type Software = 'lemmy' | 'mastodon' | 'pleroma' | 'akkoma';
 
 //Represents a Fediverse instance
 export interface Instance {
