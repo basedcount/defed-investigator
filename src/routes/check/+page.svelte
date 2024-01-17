@@ -35,6 +35,7 @@
                     if (value.unknown) unknownCount++;
 
                     instances = [...instances, value];
+                    instances.sort((a, b) => b.users - a.users);
                 });
             });
 
