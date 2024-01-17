@@ -27,6 +27,9 @@ export async function checkFederation(instance: InstanceInit, query: string): Pr
         case "mbin":
             response = await checkMbin(instance as MbinInstance, query);
             break;
+        case "misskey":
+            response = await checkMisskey(instance as MisskeyInstance, query);
+            break;
         default:
             response = {
                 blocked: undefined,
@@ -131,9 +134,9 @@ async function checkMastodon(instance: MastodonInstance | PleromaInstance | Akko
 
     interface MastodonModerated {
         domain: string;
-        // digest: string;
+        digest: string;
         severity: 'silence' | 'suspend';
-        // comment: string;
+        comment: string;
     }
 }
 
@@ -170,6 +173,67 @@ async function checkMbin(instance: MbinInstance, query: string): Promise<Respons
     }
 }
 
+/**
+ * Checks the federation status of a Misskey instance
+ * @param instance The instance retrieved from the API
+ * @param query The queried domain
+*/
+async function checkMisskey(instance: MisskeyInstance, query: string): Promise<Response> {
+    const url = `https://${instance.domain}/api/federation/instances`;
+    let res: Response = {
+        error: false,
+        blocked: undefined,
+        linked: undefined,
+        silenced: undefined,
+        //Misskey instances only share federation or defederation
+        notAllowed: false,
+        unknown: false,
+    };
+
+    try {
+        const data = await fetchTimeout(url, TIMEOUT);
+        if (!data.ok) throw new Error(data.code.toString());
+
+        const fedArr = data.data as MisskeyFederation[];
+        const fed = fedArr.find(i => i.host === query);
+
+        if (fed) {
+            if (fed.isBlocked || fed.isSuspended) res.blocked = true;
+            else if (fed.isSilenced) res.silenced = true;
+            else res.linked = true;
+        }
+    } catch (_) { res.error = true; }
+
+    return res;
+
+    interface MisskeyFederation {
+        id: string
+        firstRetrievedAt: string
+        host: string
+        usersCount: number
+        notesCount: number
+        followingCount: number
+        followersCount: number
+        isNotResponding: boolean
+        isSuspended: boolean
+        isBlocked: boolean
+        softwareName?: string
+        softwareVersion?: string
+        openRegistrations?: boolean
+        name?: string
+        description?: string
+        maintainerName?: string
+        maintainerEmail?: string
+        isSilenced: boolean
+        isSensitiveMedia: boolean
+        iconUrl?: string
+        faviconUrl?: string
+        themeColor?: string
+        infoUpdatedAt?: string
+        latestRequestReceivedAt?: string
+    }
+}
+
 
 /*      TS INTERFACES       */
 
@@ -178,6 +242,7 @@ export interface MastodonInstance extends InstanceInit { software: 'mastodon' }
 export interface PleromaInstance extends InstanceInit { software: 'pleroma' }
 export interface AkkomaInstance extends InstanceInit { software: 'akkoma' }
 export interface MbinInstance extends InstanceInit { software: 'mbin' }
+export interface MisskeyInstance extends InstanceInit { software: 'misskey' }
 
 interface Response {
     linked: boolean | undefined;    //Instance linked with queried instance

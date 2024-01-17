@@ -1,6 +1,6 @@
 import type { Instance } from "./instanceList";
 import { fetchTimeout } from "./fetch";
-import type { AkkomaInstance, LemmyInstance, MastodonInstance, MbinInstance, PleromaInstance } from "./federation";
+import type { AkkomaInstance, LemmyInstance, MastodonInstance, MbinInstance, MisskeyInstance, PleromaInstance } from "./federation";
 
 const TIMEOUT = 60000;
 
@@ -24,6 +24,8 @@ export async function getDefederations(instanceList: Instance[], query: string):
             return checkMastodon(instance as AkkomaInstance, instanceList);
         case "mbin":
             return checkMbin(instance as MbinInstance, instanceList);
+        case "misskey":
+            return checkMisskey(instance as MisskeyInstance, instanceList);
         default:
             return null;
     }
@@ -130,5 +132,62 @@ async function checkMbin(instance: MbinInstance, instanceList: Instance[]): Prom
 
     interface MbinDefederation {
         instances: string[];
+    }
+}
+
+/**
+ * Get the defederation lits of a Misskey instance
+ * @param instance The queried instance
+ * @param instanceList The list of instances retrieved from the API
+*/
+async function checkMisskey(instance: MisskeyInstance, instanceList: Instance[]): Promise<Instance[] | null> {
+    const url = `https://${instance.domain}/api/federation/instances`;
+
+    try {
+        const data = await fetchTimeout(url, TIMEOUT);
+        if (!data.ok) throw new Error(data.code.toString());
+
+        const fedArr = data.data as MisskeyFederation[];
+        const blocklist = fedArr.filter(i => i.isBlocked || i.isSuspended);
+
+        const res = new Array<Instance>();
+        for (const blocked of blocklist) {
+            const inst = instanceList.find(i => i.domain === blocked.host);
+
+            if (inst) res.push(inst);
+            //@ts-ignore
+            else res.push({ domain: blocked.host, name: blocked.name ?? blocked.host, software: blocked.softwareName ?? '', users: blocked.usersCount })
+        }
+
+        res.sort((a, b) => b.users - a.users);
+
+        return res;
+    } catch (_) { return null }
+
+    interface MisskeyFederation {
+        id: string
+        firstRetrievedAt: string
+        host: string
+        usersCount: number
+        notesCount: number
+        followingCount: number
+        followersCount: number
+        isNotResponding: boolean
+        isSuspended: boolean
+        isBlocked: boolean
+        softwareName?: string
+        softwareVersion?: string
+        openRegistrations?: boolean
+        name?: string
+        description?: string
+        maintainerName?: string
+        maintainerEmail?: string
+        isSilenced: boolean
+        isSensitiveMedia: boolean
+        iconUrl?: string
+        faviconUrl?: string
+        themeColor?: string
+        infoUpdatedAt?: string
+        latestRequestReceivedAt?: string
     }
 }
