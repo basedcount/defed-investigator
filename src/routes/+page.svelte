@@ -22,10 +22,13 @@
                         <i class="bx bx-search-alt text-xl"></i>
                     </button>
                 </div>
-                <div class="grid grid-cols-4">
+                <div class="grid grid-cols-4 max-w-md mx-auto gap-x-2">
+                    <span class="col-span-full justify-self-start mt-2">
+                        Query the following softwares:
+                    </span>
                     {#each softwareList as software}
-                        <label class="cursor-pointer label justify-normal gap-x-2">
-                            <input type="checkbox" value={software.name} class="checkbox checkbox-secondary" bind:group={softwares} />
+                        <label class="cursor-pointer label justify-normal gap-x-1">
+                            <input type="checkbox" value={software.name} class="checkbox checkbox-primary" bind:group={softwares} />
                             <span class="label-text capitalize">{software.name}</span>
                         </label>
                     {/each}

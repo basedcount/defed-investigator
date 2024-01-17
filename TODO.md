@@ -1,5 +1,4 @@
 - convert pill and software images to webp
-- add filtering checkboxes in query page
 - bug: when software is unknown no defed info can be gathered
   - the list has many holes, so it happens fairly often (eg: lemm.ee, lemmy.basedcount.com)
   - maybe when the current API gets promoted to production there will be fewer holes
