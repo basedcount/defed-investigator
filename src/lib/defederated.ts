@@ -1,6 +1,6 @@
 import type { Instance } from "./instanceList";
 import { fetchTimeout } from "./fetch";
-import type { AkkomaInstance, LemmyInstance, MastodonInstance, PleromaInstance } from "./federation";
+import type { AkkomaInstance, LemmyInstance, MastodonInstance, MbinInstance, PleromaInstance } from "./federation";
 
 const TIMEOUT = 60000;
 
@@ -22,6 +22,8 @@ export async function getDefederations(instanceList: Instance[], query: string):
             return checkMastodon(instance as PleromaInstance, instanceList);
         case "akkoma":
             return checkMastodon(instance as AkkomaInstance, instanceList);
+        case "mbin":
+            return checkMbin(instance as MbinInstance, instanceList);
         default:
             return null;
     }
@@ -95,5 +97,38 @@ async function checkMastodon(instance: MastodonInstance | PleromaInstance | Akko
         // digest: string;
         severity: 'silence' | 'suspend';
         // comment: string;
+    }
+}
+
+/**
+ * Get the defederation lits of a Mbin instance
+ * @param instance The queried instance
+ * @param instanceList The list of instances retrieved from the API
+*/
+async function checkMbin(instance: MbinInstance, instanceList: Instance[]): Promise<Instance[] | null> {
+    const url = `https://${instance.domain}/api/defederated`;
+
+    try {
+        const data = await fetchTimeout(url, TIMEOUT);
+        if (!data.ok) throw new Error(data.code.toString());
+
+        const blocklist = (data.data as MbinDefederation).instances;
+
+        const res = new Array<Instance>();
+        for (const blocked of blocklist) {
+            const inst = instanceList.find(i => i.domain === blocked);
+
+            if (inst) res.push(inst);
+            //@ts-ignore
+            else res.push({ domain: blocked, name: blocked, software: blocked.software, users: -1 })
+        }
+
+        res.sort((a, b) => b.users - a.users);
+
+        return res;
+    } catch (_) { return null }
+
+    interface MbinDefederation {
+        instances: string[];
     }
 }

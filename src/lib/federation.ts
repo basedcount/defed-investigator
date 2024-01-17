@@ -24,6 +24,9 @@ export async function checkFederation(instance: InstanceInit, query: string): Pr
         case "akkoma": // Akkoma implements the Mastodon API
             response = await checkMastodon(instance as AkkomaInstance, query);
             break;
+        case "mbin":
+            response = await checkMbin(instance as MbinInstance, query);
+            break;
         default:
             response = {
                 blocked: undefined,
@@ -134,12 +137,47 @@ async function checkMastodon(instance: MastodonInstance | PleromaInstance | Akko
     }
 }
 
+/**
+ * Checks the federation status of a Mbin instance
+ * @param instance The instance retrieved from the API
+ * @param query The queried domain
+*/
+async function checkMbin(instance: MbinInstance, query: string): Promise<Response> {
+    const url = `https://${instance.domain}/api/defederated`;
+    let res: Response = {
+        error: false,
+        blocked: undefined,
+        //Mbin instances only share whether they are defederated or not
+        linked: false,
+        notAllowed: false,
+        silenced: false,
+        unknown: false,
+    };
+
+    try {
+        const data = await fetchTimeout(url, TIMEOUT);
+        if (!data.ok) throw new Error(data.code.toString());
+
+        const fed = (data.data as MbinDefederation).instances;
+
+        res.blocked = fed.includes(query);
+    } catch (_) { res.error = true; }
+
+    return res;
+
+    interface MbinDefederation {
+        instances: string[];
+    }
+}
+
+
 /*      TS INTERFACES       */
 
 export interface LemmyInstance extends InstanceInit { software: 'lemmy' }
 export interface MastodonInstance extends InstanceInit { software: 'mastodon' }
 export interface PleromaInstance extends InstanceInit { software: 'pleroma' }
 export interface AkkomaInstance extends InstanceInit { software: 'akkoma' }
+export interface MbinInstance extends InstanceInit { software: 'mbin' }
 
 interface Response {
     linked: boolean | undefined;    //Instance linked with queried instance

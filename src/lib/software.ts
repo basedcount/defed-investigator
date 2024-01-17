@@ -1,4 +1,4 @@
-export type Software = 'lemmy' | 'mastodon' | 'pleroma' | 'akkoma';
+export type Software = 'lemmy' | 'mastodon' | 'pleroma' | 'akkoma' | 'mbin';
 
 //Instances with less than "users" monthly active users aren't queried (limits number of requests)
 export const softwareList = [
@@ -16,6 +16,10 @@ export const softwareList = [
     },
     {
         name: 'akkoma',
+        users: 2
+    },
+    {
+        name: 'mbin',
         users: 2
     },
 ] satisfies { name: Software, users: number }[];
