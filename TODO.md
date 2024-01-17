@@ -1,1 +1,3 @@
 - convert pill and software images to webp
+- instead of returning [], consider throwing error when instance's blocklist is private
+  - return null, handle gracefully in frontend. possibly change function

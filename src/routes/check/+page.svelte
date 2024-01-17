@@ -93,26 +93,28 @@
                 </div>
             </div>
 
-            <div class="collapse collapse-arrow bg-primary">
-                <input type="checkbox" name="my-accordion-2" aria-label="Expand / collapse" />
-                <div class="collapse-title text-xl font-medium">
-                    Instances not allowing <span class="font-mono">{data.name}</span>
-                </div>
-                <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
-                    <div class="col-span-full">
-                        {notAllowedCount} total {notAllowedCount === 1 ? "instance" : "instances"}
-                        <p class="font-sm mt-1">
-                            These instances are only federating with a limited number of domains and <span class="font-mono">{data.name}</span> isn't among them.
-                        </p>
+            {#if notAllowedCount > 0}
+                <div class="collapse collapse-arrow bg-primary">
+                    <input type="checkbox" name="my-accordion-2" aria-label="Expand / collapse" />
+                    <div class="collapse-title text-xl font-medium">
+                        Instances not allowing <span class="font-mono">{data.name}</span>
                     </div>
+                    <div class="collapse-content grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
+                        <div class="col-span-full">
+                            {notAllowedCount} total {notAllowedCount === 1 ? "instance" : "instances"}
+                            <p class="font-sm mt-1">
+                                These instances are only federating with a limited number of domains and <span class="font-mono">{data.name}</span> isn't among them.
+                            </p>
+                        </div>
 
-                    {#each instances as inst}
-                        {#if inst.notAllowed}
-                            <Instance {inst} className={"bg-primary-focus"} />
-                        {/if}
-                    {/each}
+                        {#each instances as inst}
+                            {#if inst.notAllowed}
+                                <Instance {inst} className={"bg-primary-focus"} />
+                            {/if}
+                        {/each}
+                    </div>
                 </div>
-            </div>
+            {/if}
 
             {#if silencedCount > 0}
                 <div class="collapse collapse-arrow bg-purple-500">
@@ -151,9 +153,13 @@
                         <div class="col-span-full">Loading...</div>
                     {:then blockedBy}
                         <div class="col-span-full">
-                            {blockedBy.length} total {blockedBy.length === 1 ? "instance" : "instances"}
+                            {#if blockedBy}
+                                {blockedBy.length} total {blockedBy.length === 1 ? "instance" : "instances"}
+                            {/if}
                             <p class="font-sm mt-1">
-                                {#if blockedBy.length > 1}
+                                {#if !blockedBy}
+                                    <span class="font-mono">{data.name}</span> has hidden its blocklist. No information is available.
+                                {:else if blockedBy.length > 1}
                                     <span class="font-mono">{data.name}</span> has defederated from these instances.
                                 {:else if blockedBy.length === 1}
                                     <span class="font-mono">{data.name}</span> has defederated from this instance.
@@ -163,9 +169,11 @@
                             </p>
                         </div>
 
-                        {#each blockedBy as inst}
-                            <Instance {inst} className={"bg-green-600"} />
-                        {/each}
+                        {#if blockedBy}
+                            {#each blockedBy as inst}
+                                <Instance {inst} className={"bg-green-600"} />
+                            {/each}
+                        {/if}
                     {/await}
                 </div>
             </div>

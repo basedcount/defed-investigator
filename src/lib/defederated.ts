@@ -9,7 +9,7 @@ const TIMEOUT = 60000;
  * @param instanceList The list of instances retrieved from the API
  * @param query The queried domain
 */
-export async function getDefederations(instanceList: Instance[], query: string): Promise<Instance[]> {
+export async function getDefederations(instanceList: Instance[], query: string): Promise<Instance[] | null> {
     const instance = instanceList.find(inst => inst.domain === query);
     if (!instance) return [];
 
@@ -23,7 +23,7 @@ export async function getDefederations(instanceList: Instance[], query: string):
         case "akkoma":
             return checkMastodon(instance as AkkomaInstance, instanceList);
         default:
-            return [];
+            return null;
     }
 }
 
@@ -32,7 +32,7 @@ export async function getDefederations(instanceList: Instance[], query: string):
  * @param instance The queried instance
  * @param instanceList The list of instances retrieved from the API
 */
-async function checkLemmy(instance: LemmyInstance, instanceList: Instance[]): Promise<Instance[]> {
+async function checkLemmy(instance: LemmyInstance, instanceList: Instance[]): Promise<Instance[] | null> {
     const url = `https://${instance.domain}/api/v3/federated_instances`;
 
     try {
@@ -52,7 +52,7 @@ async function checkLemmy(instance: LemmyInstance, instanceList: Instance[]): Pr
         res.sort((a, b) => b.users - a.users);
 
         return res;
-    } catch (_) { return [] }
+    } catch (_) { return null }
 
     interface LemmyFederation {
         federated_instances: {
@@ -66,7 +66,7 @@ async function checkLemmy(instance: LemmyInstance, instanceList: Instance[]): Pr
  * @param instance The queried instance
  * @param instanceList The list of instances retrieved from the API
 */
-async function checkMastodon(instance: MastodonInstance | PleromaInstance | AkkomaInstance, instanceList: Instance[]): Promise<Instance[]> {
+async function checkMastodon(instance: MastodonInstance | PleromaInstance | AkkomaInstance, instanceList: Instance[]): Promise<Instance[] | null> {
     const url = `https://${instance.domain}/api/v1/instance/domain_blocks`;
 
     try {
@@ -88,7 +88,7 @@ async function checkMastodon(instance: MastodonInstance | PleromaInstance | Akko
         res.sort((a, b) => b.users - a.users);
 
         return res;
-    } catch (_) { return [] }
+    } catch (_) { return null }
 
     interface MastodonModerated {
         domain: string;

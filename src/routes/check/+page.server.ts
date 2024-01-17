@@ -14,7 +14,7 @@ export async function load({ url }) {
     const instances = await fetchInstances(software as Software[]);
 
     //Send a warning if the instance isn't in the API response: it probably doesn't exist
-    const warning = !instances.map(inst => inst.domain).includes(name)
+    const warning = !instances.map(inst => inst.domain).includes(name);
 
     return {
         name: removeProtocol(name),
