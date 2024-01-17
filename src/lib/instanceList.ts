@@ -1,12 +1,9 @@
 import { softwareList, type Software } from "./software";
 
 //Return a list of instance links and their names, fetched from the Fediverse Observer GraphQL API
-export async function fetchInstances(softwareQuery: Software[]) {
-    //Extract queried softwares from softwareList
-    const softwares = softwareList.filter(s => softwareQuery.includes(s.name));
-    
-    //Query them
-    const res = await Promise.all(softwares.map(software => query(software.name, software.users)));
+export async function fetchInstances(softwareQuery: Software[]) {   
+    //Query the GraphQL API for every tracked software (regardless of whether they are queried or not. If they aren't they'll be filtered out later)
+    const res = await Promise.all(softwareList.map(software => query(software.name, software.users, softwareQuery)));
 
     const instances = res.flat();
     instances.sort((a, b) => b.users - a.users);
@@ -14,7 +11,13 @@ export async function fetchInstances(softwareQuery: Software[]) {
     return instances;
 }
 
-async function query(software: Software, minimum: number) {
+/**
+ * Query the Fediverse Observer GraphQL API for a given software
+ * @param software The software to be queried
+ * @param minimum Minimum number of monthly active users for the instance to be returned
+ * @param queriedSoftware List of queried softawares
+*/
+async function query(software: Software, minimum: number, queriedSoftware: string[]) {
     const query = `
     query {
         nodes(status: "UP" softwarename: "${software}" minusersmonthly: ${minimum}) 
@@ -43,6 +46,7 @@ async function query(software: Software, minimum: number) {
             software,
             domain: instance.domain,
             users: instance.active_users_monthly,
+            query: queriedSoftware.includes(software),  //True if the server is among the queried ones
         }
     }) satisfies Instance[];
 }
@@ -64,4 +68,5 @@ export interface Instance {
     domain: string;
     users: number;
     software: Software;
+    query: boolean;
 }

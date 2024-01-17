@@ -1,2 +1,1 @@
 - convert pill and software images to webp
-- instead of pulling warning from instanceList, try pulling node graphql endpoint (from server)
