@@ -22,7 +22,7 @@
                         <i class="bx bx-search-alt text-xl"></i>
                     </button>
                 </div>
-                <div class="grid grid-cols-4 max-w-md mx-auto gap-x-2">
+                <div class="grid grid-cols-3 md:grid-cols-4 max-w-md mx-auto gap-x-2">
                     <span class="col-span-full justify-self-start mt-2"> Query the following softwares: </span>
                     {#each softwareList as software}
                         <label class="cursor-pointer label justify-normal gap-x-1">

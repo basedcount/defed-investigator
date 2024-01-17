@@ -11,11 +11,7 @@ export const softwareList = [
         users: 20
     },
     {
-        name: 'pleroma',
-        users: 2
-    },
-    {
-        name: 'akkoma',
+        name: 'misskey',
         users: 2
     },
     {
@@ -23,7 +19,11 @@ export const softwareList = [
         users: 2
     },
     {
-        name: 'misskey',
+        name: 'pleroma',
+        users: 2
+    },
+    {
+        name: 'akkoma',
         users: 2
     },
 ] satisfies { name: Software, users: number }[];
