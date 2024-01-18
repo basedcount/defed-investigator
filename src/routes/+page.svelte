@@ -25,7 +25,7 @@
                 <div class="grid grid-cols-3 md:grid-cols-4 max-w-md mx-auto gap-x-2">
                     <span class="col-span-full justify-self-start mt-2"> Query the following softwares: </span>
                     {#each softwareList as software}
-                        <label class="cursor-pointer label justify-normal gap-x-1">
+                        <label class="cursor-pointer label py-1 justify-normal gap-x-1">
                             <input type="checkbox" value={software.name} class="checkbox checkbox-primary" bind:group={softwares} />
                             <span class="label-text capitalize">{software.name}</span>
                         </label>
@@ -34,7 +34,7 @@
                 <input type="hidden" value={softwares} name="software" />
             </form>
 
-            <p class="py-6 text-sm">
+            <p class="py-8 text-sm">
                 <span class="font-bold text-accent-focus">How does this work?</span>
                 The Investigator will query every Fediverse instance through your browser. The full list of instances is retrieved from the
                 <a href="https://fediverse.observer/list" class="link">Fediverse Observer</a>.

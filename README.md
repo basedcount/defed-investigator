@@ -12,6 +12,7 @@ While the Investigator started off as a Lemmy-only project, it has now grown to 
 - Pleroma
 - Akkoma
 - Mbin
+- Friendica
 
 # How does it work?
 The site will send a request to every instance running the selected softwares. The requests will be sent through your browser. The process can be lenghty, and even take various minutes. To speed up the process, you may choose to only query some softwares. The list of instances is retrieved from the API of the [Fediverse Observer](https://fediverse.observer/). Single user or otherwise small instances are excluded from the process.
