@@ -3,7 +3,6 @@ import type { Software } from "$lib/software.js";
 import { error } from "@sveltejs/kit";
 import { getDefederations } from "$lib/defederated";
 
-
 export async function load({ url }) {
     const nameParam = url.searchParams.get('name');
     const softwareParam = url.searchParams.get('software') ?? '';
