@@ -1,0 +1,3 @@
+- improve performance
+  - code sorted insert instead of resorting the array on every entry
+- add images for peertube, pixelfed, kbin. freebird
