@@ -56,7 +56,7 @@
     </div>
 
     <div class="navbar-end">
-        <a class="btn btn-ghost cursor-pointer" href="https://github.com/ornato-t/lemmy-defed-investigator">
+        <a class="btn btn-ghost cursor-pointer" href="https://github.com/basedcount/defed-investigator">
             <i class="bx bxl-github text-4xl"></i>
         </a>
     </div>
