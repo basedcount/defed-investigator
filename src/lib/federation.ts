@@ -1,5 +1,5 @@
 import type { Instance as InstanceInit } from "./instanceList";
-import { fetchTimeout } from "./fetch";
+import { fetchTextTimeout, fetchTimeout } from "./fetch";
 
 const TIMEOUT = 5 * 1000;
 
@@ -29,6 +29,9 @@ export async function checkFederation(instance: InstanceInit, query: string): Pr
             break;
         case "misskey":
             response = await checkMisskey(instance as MisskeyInstance, query);
+            break;
+        case "friendica":
+            response = await checkFriendica(instance as FriendicaInstance, query);
             break;
         default:
             response = {
@@ -234,6 +237,47 @@ async function checkMisskey(instance: MisskeyInstance, query: string): Promise<R
     }
 }
 
+/**
+ * Checks the federation status of a Friendica instance
+ * @param instance The instance retrieved from the API
+ * @param query The queried domain
+*/
+async function checkFriendica(instance: FriendicaInstance, query: string): Promise<Response> {
+    const urlLinked = `https://${instance.domain}/api/v1/instance/peers`;
+    const urlBlocked = `https://${instance.domain}/blocklist/domain/download`;
+
+    let res: Response = {
+        error: false,
+        linked: undefined,
+        blocked: undefined,
+        //Friendica instances can either be blocked or not
+        silenced: false,
+        unknown: false,
+        notAllowed: false,
+    };
+
+    try {
+        const [linkedData, blockedData] = await Promise.all([fetchTimeout(urlLinked, TIMEOUT), fetchTextTimeout(urlBlocked, TIMEOUT)]);
+
+        if (linkedData.code === 401 || linkedData.code === 404 || blockedData.code === 401 || blockedData.code === 404) {
+            res.unknown = true;
+        }
+        else {
+            const [linked, blocked]: [string[], string[]] = [linkedData.data, getCSVBlocks(blockedData.data)];
+
+            res.blocked = blocked.includes(query);
+
+            if (!blocked) res.linked = linked.includes(query);
+        }
+    } catch (_) { res.error = true; }
+
+    return res;
+
+    //Parses a CSV returned by Friendica
+    function getCSVBlocks(data: string) {
+        return [...data.matchAll(/(.+),/g)].map(match => match[1]);
+    }
+}
 
 /*      TS INTERFACES       */
 
@@ -243,6 +287,7 @@ export interface PleromaInstance extends InstanceInit { software: 'pleroma' }
 export interface AkkomaInstance extends InstanceInit { software: 'akkoma' }
 export interface MbinInstance extends InstanceInit { software: 'mbin' }
 export interface MisskeyInstance extends InstanceInit { software: 'misskey' }
+export interface FriendicaInstance extends InstanceInit { software: 'friendica' }
 
 interface Response {
     linked: boolean | undefined;    //Instance linked with queried instance

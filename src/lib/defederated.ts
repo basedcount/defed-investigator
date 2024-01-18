@@ -1,6 +1,6 @@
 import type { Instance } from "./instanceList";
-import { fetchTimeout } from "./fetch";
-import type { AkkomaInstance, LemmyInstance, MastodonInstance, MbinInstance, MisskeyInstance, PleromaInstance } from "./federation";
+import { fetchTextTimeout, fetchTimeout } from "./fetch";
+import type { AkkomaInstance, FriendicaInstance, LemmyInstance, MastodonInstance, MbinInstance, MisskeyInstance, PleromaInstance } from "./federation";
 
 const TIMEOUT = 60000;
 
@@ -26,6 +26,8 @@ export async function getDefederations(instanceList: Instance[], query: string):
             return checkMbin(instance as MbinInstance, instanceList);
         case "misskey":
             return checkMisskey(instance as MisskeyInstance, instanceList);
+        case "friendica":
+            return checkFriendica(instance as FriendicaInstance, instanceList);
         default:
             return null;
     }
@@ -189,5 +191,39 @@ async function checkMisskey(instance: MisskeyInstance, instanceList: Instance[])
         themeColor?: string
         infoUpdatedAt?: string
         latestRequestReceivedAt?: string
+    }
+}
+
+/**
+ * Get the defederation lits of a Friendica instance
+ * @param instance The queried instance
+ * @param instanceList The list of instances retrieved from the API
+*/
+async function checkFriendica(instance: FriendicaInstance, instanceList: Instance[]): Promise<Instance[] | null> {
+    const url = `https://${instance.domain}/blocklist/domain/download`;
+
+    try {
+        const data = await fetchTextTimeout(url, TIMEOUT);
+        if (!data.ok) throw new Error(data.code.toString());
+        
+        const blocklist = getCSVBlocks(data.data);
+
+        const res = new Array<Instance>();
+        for (const blocked of blocklist) {
+            const inst = instanceList.find(i => i.domain === blocked);
+
+            if (inst) res.push(inst);
+            //@ts-ignore
+            else res.push({ domain: blocked, name: blocked, software: '', users: -1 })
+        }
+
+        res.sort((a, b) => b.users - a.users);
+
+        return res;
+    } catch (_) { console.log(_);return null }
+
+    //Parses a CSV returned by Friendica
+    function getCSVBlocks(data: string) {
+        return [...data.matchAll(/(.+),/g)].map(match => match[1]);
     }
 }
